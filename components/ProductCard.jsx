@@ -3,11 +3,14 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Heart, ShoppingBag, Star, Eye } from 'lucide-react'
+import { Heart, ShoppingBag, Star, Eye, Check } from 'lucide-react'
+import useCartStore from '@/lib/cart-store'
 
 export default function ProductCard({ product }) {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [addedToCart, setAddedToCart] = useState(false)
+  const addItem = useCartStore((state) => state.addItem)
 
   const {
     name = 'Kerala Kasavu Saree',
@@ -149,9 +152,24 @@ export default function ProductCard({ product }) {
               transition={{ duration: 0.25, ease: 'easeOut' }}
               className="absolute bottom-0 left-0 right-0 p-4"
             >
-              <button className="w-full py-3 bg-white/95 backdrop-blur-sm text-gray-900 text-sm font-medium tracking-wide rounded-lg hover:bg-[var(--color-primary)] hover:text-white transition-all duration-300 shadow-lg flex items-center justify-center gap-2">
-                <ShoppingBag className="w-4 h-4" />
-                Add to Cart
+              <button
+                onClick={(e) => {
+                  e.preventDefault()
+                  addItem(product)
+                  setAddedToCart(true)
+                  setTimeout(() => setAddedToCart(false), 1500)
+                }}
+                className={`w-full py-3 backdrop-blur-sm text-sm font-medium tracking-wide rounded-lg transition-all duration-300 shadow-lg flex items-center justify-center gap-2 ${
+                  addedToCart
+                    ? 'bg-green-500 text-white'
+                    : 'bg-white/95 text-gray-900 hover:bg-[var(--color-primary)] hover:text-white'
+                }`}
+              >
+                {addedToCart ? (
+                  <><Check className="w-4 h-4" /> Added!</>
+                ) : (
+                  <><ShoppingBag className="w-4 h-4" /> Add to Cart</>
+                )}
               </button>
             </motion.div>
           )}

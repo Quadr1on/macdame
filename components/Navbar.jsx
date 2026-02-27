@@ -4,11 +4,13 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ShoppingBag, Menu, X, User, LogOut } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
+import useCartStore from '@/lib/cart-store'
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const { user, loading, signOut } = useAuth()
+  const totalItems = useCartStore((state) => state.getTotalItems())
   const profileRef = useRef(null)
 
   // Close dropdown when clicking outside
@@ -122,9 +124,11 @@ export default function Navbar() {
               className="relative hover:bg-[var(--color-secondary)]/10"
             >
               <ShoppingBag className="h-5 w-5 text-[var(--color-primary)]" />
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-[var(--color-terracotta)] text-white text-xs rounded-full flex items-center justify-center font-bold">
-                0
-              </span>
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-[var(--color-terracotta)] text-white text-xs rounded-full flex items-center justify-center font-bold">
+                  {totalItems > 99 ? '99+' : totalItems}
+                </span>
+              )}
             </Button></Link>
 
             {/* Mobile Menu Button */}

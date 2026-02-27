@@ -1,11 +1,26 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ShoppingBag, Menu, X, User } from 'lucide-react'
+import { ShoppingBag, Menu, X, User, LogOut } from 'lucide-react'
+import { useAuth } from '@/lib/auth-context'
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const { user, loading, signOut } = useAuth()
+  const profileRef = useRef(null)
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const navLinks = [
     { name: 'Home', href: '/' },
@@ -14,6 +29,9 @@ export default function Navbar() {
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
   ]
+
+  const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture
+  const userName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[var(--color-cream)]/95 backdrop-blur-md border-b border-[var(--color-secondary)]/20 shadow-sm">
@@ -45,13 +63,59 @@ export default function Navbar() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-3">
-            <Link href="/login"><Button
-              variant="ghost"
-              size="icon"
-              className="hidden md:flex hover:bg-[var(--color-secondary)]/10"
-            >
-              <User className="h-5 w-5 text-[var(--color-primary)]" />
-            </Button></Link>
+            {/* Profile / Sign In */}
+            {!loading && (
+              user ? (
+                <div className="relative hidden md:block" ref={profileRef}>
+                  <button
+                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    className="flex items-center justify-center rounded-full transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] focus:ring-offset-2"
+                  >
+                    {avatarUrl ? (
+                      <img
+                        src={avatarUrl}
+                        alt={userName || 'Profile'}
+                        className="w-9 h-9 rounded-full object-cover ring-2 ring-[var(--color-secondary)]"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] flex items-center justify-center text-white font-semibold text-sm">
+                        {userName?.charAt(0)?.toUpperCase() || 'U'}
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Profile Dropdown */}
+                  {isProfileOpen && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="px-4 py-3 border-b border-gray-100">
+                        <p className="text-sm font-semibold text-gray-900 truncate">{userName}</p>
+                        <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setIsProfileOpen(false)
+                          signOut()
+                        }}
+                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link href="/login"><Button
+                  variant="ghost"
+                  size="icon"
+                  className="hidden md:flex hover:bg-[var(--color-secondary)]/10"
+                >
+                  <User className="h-5 w-5 text-[var(--color-primary)]" />
+                </Button></Link>
+              )
+            )}
+
             <Link href="/cart"><Button
               variant="ghost"
               size="icon"
@@ -94,13 +158,46 @@ export default function Navbar() {
                 </Link>
               ))}
               <div className="pt-2 border-t border-gray-200">
-                <Link
-                  href="/login"
-                  className="block py-3 px-4 text-[var(--color-primary)] font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign In
-                </Link>
+                {user ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3 py-2 px-4">
+                      {avatarUrl ? (
+                        <img
+                          src={avatarUrl}
+                          alt={userName || 'Profile'}
+                          className="w-8 h-8 rounded-full object-cover ring-2 ring-[var(--color-secondary)]"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] flex items-center justify-center text-white font-semibold text-xs">
+                          {userName?.charAt(0)?.toUpperCase() || 'U'}
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-gray-900 truncate">{userName}</p>
+                        <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setIsMenuOpen(false)
+                        signOut()
+                      }}
+                      className="flex items-center gap-2 w-full py-3 px-4 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </button>
+                  </div>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="block py-3 px-4 text-[var(--color-primary)] font-medium"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Sign In
+                  </Link>
+                )}
               </div>
             </div>
           </div>

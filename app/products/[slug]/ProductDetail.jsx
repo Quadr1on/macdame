@@ -1,5 +1,5 @@
 'use client'
-import { useState, use } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -12,11 +12,8 @@ import {
   Truck, RotateCcw, ShieldCheck, Eye, Check, MapPin, ChevronLeft, ChevronRight,
 } from 'lucide-react'
 import useCartStore from '@/lib/cart-store'
-import allProducts from '@/lib/products-data'
 
-export default function ProductPage({ params }) {
-  const { id } = use(params)
-  const product = allProducts.find((p) => p.id === parseInt(id))
+export default function ProductDetail({ product }) {
   const router = useRouter()
 
   const [selectedImage, setSelectedImage] = useState(0)

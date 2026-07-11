@@ -31,6 +31,12 @@ export async function middleware(request) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    // Skip static assets AND the public catalog routes (/shop, /products,
+    // /collections): those pages read no session server-side (they use the
+    // cookie-free catalog client), so paying a Supabase auth round trip on
+    // every navigation there only added latency. Any other route (home, cart,
+    // login, auth callback) still refreshes the session as before. If a
+    // catalog page ever needs the server session, re-include it here.
+    '/((?!_next/static|_next/image|favicon.ico|shop|products/|collections/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

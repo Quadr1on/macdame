@@ -18,6 +18,9 @@ export default function Hero() {
         />
         {/* Dark Overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent" />
+        {/* Top scrim so the transparent navbar stays legible over the full width of the photo,
+            not just the left side the gradient above already darkens */}
+        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/50 to-transparent" />
       </div>
 
       {/* Content */}

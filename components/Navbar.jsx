@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { ShoppingBag, Menu, X, User, LogOut, LogIn, ChevronDown, ChevronRight } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
@@ -259,72 +260,88 @@ export default function Navbar() {
       {/* Full-screen mobile menu — a SIBLING of <nav>, not nested inside it, so its
           inset-0 background always covers the whole viewport regardless of any
           transform/transition running on the bar above it.
-          Entrance uses CSS animations (tailwindcss-animate), not framer-motion: CSS keeps
-          the links visible even if requestAnimationFrame is throttled, and matches the
-          animate-in utilities already used elsewhere in this file. */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-40 md:hidden bg-[var(--color-cream)] flex flex-col animate-in fade-in duration-200">
-          <div className="flex-1 overflow-y-auto px-6 pt-28 pb-6 flex flex-col">
-            <nav className="flex flex-col gap-1">
-              {navLinks.map((link, i) =>
-                link.dropdown ? (
-                  <div
-                    key={link.name}
-                    className="animate-in fade-in slide-in-from-left-4 fill-mode-both duration-300 motion-reduce:animate-none"
-                    style={{ animationDelay: `${i * 60}ms` }}
-                  >
-                    <button
-                      onClick={() => setIsCollectionsOpen(!isCollectionsOpen)}
-                      className="w-full flex items-center justify-between py-3 text-3xl text-[var(--color-primary-dark)]"
-                      style={serif}
-                      aria-expanded={isCollectionsOpen}
-                    >
-                      {link.name}
-                      <ChevronDown
-                        className={`h-6 w-6 transition-transform duration-300 ${isCollectionsOpen ? 'rotate-180' : ''}`}
-                      />
-                    </button>
-                    {isCollectionsOpen && (
-                      <div className="pl-4 animate-in fade-in slide-in-from-top-2 duration-200 motion-reduce:animate-none">
-                        {link.dropdown.map((item) => (
-                          <Link
-                            key={item.name}
-                            href={item.href}
-                            onClick={closeMenu}
-                            className="flex items-center gap-2 py-2.5 text-lg text-[var(--color-primary-dark)]/75 hover:text-[var(--color-primary)] transition-colors"
-                            style={serif}
+          framer-motion drives the smooth fade on open/close (AnimatePresence exit),
+          the staggered link slide-in, and the collections accordion's height slide. */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="fixed inset-0 z-40 md:hidden bg-[var(--color-cream)] flex flex-col"
+          >
+            <div className="flex-1 overflow-y-auto px-6 pt-28 pb-6 flex flex-col">
+              <nav className="flex flex-col gap-1">
+                {navLinks.map((link, i) =>
+                  link.dropdown ? (
+                    <div key={link.name}>
+                      <motion.button
+                        initial={{ opacity: 0, x: -24 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 + i * 0.07, duration: 0.4, ease: 'easeOut' }}
+                        onClick={() => setIsCollectionsOpen(!isCollectionsOpen)}
+                        className="w-full flex items-center justify-between py-3 text-3xl text-[var(--color-primary-dark)]"
+                        style={serif}
+                        aria-expanded={isCollectionsOpen}
+                      >
+                        {link.name}
+                        <ChevronDown
+                          className={`h-6 w-6 transition-transform duration-300 ${isCollectionsOpen ? 'rotate-180' : ''}`}
+                        />
+                      </motion.button>
+                      <AnimatePresence initial={false}>
+                        {isCollectionsOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25, ease: 'easeInOut' }}
+                            className="overflow-hidden pl-4"
                           >
-                            <ChevronRight className="h-4 w-4 text-[var(--color-secondary)]" />
-                            {item.name}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div
-                    key={link.name}
-                    className="animate-in fade-in slide-in-from-left-4 fill-mode-both duration-300 motion-reduce:animate-none"
-                    style={{ animationDelay: `${i * 60}ms` }}
-                  >
-                    <Link
-                      href={link.href}
-                      onClick={closeMenu}
-                      className="block py-3 text-3xl text-[var(--color-primary-dark)] hover:text-[var(--color-primary)] transition-colors"
-                      style={serif}
+                            {link.dropdown.map((item) => (
+                              <Link
+                                key={item.name}
+                                href={item.href}
+                                onClick={closeMenu}
+                                className="flex items-center gap-2 py-2.5 text-lg text-[var(--color-primary-dark)]/75 hover:text-[var(--color-primary)] transition-colors"
+                                style={serif}
+                              >
+                                <ChevronRight className="h-4 w-4 text-[var(--color-secondary)]" />
+                                {item.name}
+                              </Link>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <motion.div
+                      key={link.name}
+                      initial={{ opacity: 0, x: -24 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 + i * 0.07, duration: 0.4, ease: 'easeOut' }}
                     >
-                      {link.name}
-                    </Link>
-                  </div>
-                )
-              )}
-            </nav>
+                      <Link
+                        href={link.href}
+                        onClick={closeMenu}
+                        className="block py-3 text-3xl text-[var(--color-primary-dark)] hover:text-[var(--color-primary)] transition-colors"
+                        style={serif}
+                      >
+                        {link.name}
+                      </Link>
+                    </motion.div>
+                  )
+                )}
+              </nav>
 
-            {/* Account + Cart pinned to the bottom of the sidebar */}
-            <div
-              className="mt-auto pt-6 border-t border-[var(--color-secondary)]/25 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 fill-mode-both duration-300 motion-reduce:animate-none"
-              style={{ animationDelay: `${navLinks.length * 60 + 40}ms` }}
-            >
+              {/* Account + Cart pinned to the bottom of the sidebar */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + navLinks.length * 0.07, duration: 0.4, ease: 'easeOut' }}
+                className="mt-auto pt-6 border-t border-[var(--color-secondary)]/25 flex items-center gap-3"
+              >
                 {!loading && (
                   user ? (
                     <div className="relative flex-1" ref={mobileProfileRef}>
@@ -394,10 +411,11 @@ export default function Navbar() {
                     </span>
                   )}
                 </Link>
+              </motion.div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

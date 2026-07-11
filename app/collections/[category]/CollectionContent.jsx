@@ -64,7 +64,7 @@ export default function CollectionContent({ category, products }) {
           {/* ---- Category Hero ---- */}
           <section
             ref={heroRef}
-            className="relative h-[46vh] min-h-[340px] overflow-hidden"
+            className="relative h-[54vh] min-h-[400px] overflow-hidden"
           >
             <motion.div style={{ y: imageY, scale: imageScale }} className="absolute inset-0">
               <Image
@@ -101,28 +101,42 @@ export default function CollectionContent({ category, products }) {
                 <span className="text-white">{category.name}</span>
               </motion.nav>
 
+              {/* The category name is the focal point — same italic-first voice as
+                  the homepage hero, at display scale. Everything else supports it. */}
               <motion.h1
                 variants={heroItem}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight"
+                className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.05] tracking-tight [text-wrap:balance]"
                 style={serif}
               >
-                {possessive(category.name)} Collection
+                <span className="italic">{possessive(category.name)}</span>
+                <br />
+                Collection
               </motion.h1>
+
+              {/* Gold keyline — the site's underline motif, drawn on entrance */}
+              <motion.div
+                variants={heroItem}
+                className="mt-6 flex items-center gap-4"
+              >
+                <motion.span
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 0.7, delay: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="block h-0.5 w-16 origin-left bg-[var(--color-secondary)] motion-reduce:transition-none"
+                />
+                <span className="text-sm font-semibold tracking-wide text-[var(--color-secondary)]">
+                  {products.length} {products.length === 1 ? 'piece' : 'pieces'}
+                </span>
+              </motion.div>
 
               {category.description && (
                 <motion.p
                   variants={heroItem}
-                  className="mt-4 max-w-xl text-base md:text-lg text-white/90 leading-relaxed"
+                  className="mt-5 max-w-lg text-base md:text-lg text-white/85 leading-relaxed [text-wrap:pretty]"
                 >
                   {category.description}
                 </motion.p>
               )}
-
-              <motion.div variants={heroItem} className="mt-6">
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-[var(--color-secondary)]/90 text-white text-sm font-medium rounded-full">
-                  {products.length} {products.length === 1 ? 'piece' : 'pieces'}
-                </span>
-              </motion.div>
             </motion.div>
           </section>
 

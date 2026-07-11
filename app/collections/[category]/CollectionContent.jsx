@@ -20,6 +20,9 @@ const serif = { fontFamily: 'var(--font-playfair), Georgia, serif' }
 const MIN_PRICE = 0
 const MAX_PRICE = 20000
 
+// "Men" -> "Men's", but "Kids" -> "Kids'" (names already ending in s)
+const possessive = (name) => (name.endsWith('s') ? `${name}'` : `${name}'s`)
+
 // Entrance choreography for the hero copy
 const heroStagger = {
   hidden: {},
@@ -103,7 +106,7 @@ export default function CollectionContent({ category, products }) {
                 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight"
                 style={serif}
               >
-                {category.name}&apos;s Collection
+                {possessive(category.name)} Collection
               </motion.h1>
 
               {category.description && (

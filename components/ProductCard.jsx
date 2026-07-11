@@ -72,6 +72,7 @@ export default function ProductCard({ product }) {
           <AnimatePresence>
             {isNew && (
               <motion.span
+                key="new"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
@@ -82,6 +83,7 @@ export default function ProductCard({ product }) {
             )}
             {isBestseller && (
               <motion.span
+                key="bestseller"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}

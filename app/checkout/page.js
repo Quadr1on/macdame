@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import Script from 'next/script'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
@@ -10,6 +9,7 @@ import { MapPin, ShoppingBag, Plus, Check } from 'lucide-react'
 import useCartStore from '@/lib/cart-store'
 import { useAuth } from '@/lib/auth-context'
 import { supabase } from '@/lib/supabase/client'
+import { loadRazorpayCheckout } from '@/lib/razorpay'
 
 export default function CheckoutPage() {
   const { items, getSubtotal, getTotalItems, getTotalSavings, clearCart } = useCartStore()
@@ -22,7 +22,6 @@ export default function CheckoutPage() {
   const [selectedAddressId, setSelectedAddressId] = useState(null)
   const [paying, setPaying] = useState(false)
   const [error, setError] = useState('')
-  const [scriptLoaded, setScriptLoaded] = useState(false)
 
   useEffect(() => setMounted(true), [])
 
@@ -80,12 +79,19 @@ export default function CheckoutPage() {
       setError('Please select a delivery address')
       return
     }
-    if (!scriptLoaded || typeof window === 'undefined' || !window.Razorpay) {
-      setError('Payment gateway is still loading, please try again in a moment')
-      return
-    }
 
     setPaying(true)
+
+    // Load the gateway before creating the order, so a gateway failure can't
+    // leave an orphaned pending order behind.
+    let RazorpayCheckout
+    try {
+      RazorpayCheckout = await loadRazorpayCheckout()
+    } catch {
+      setError('Could not reach the payment gateway. Check your connection and try again.')
+      setPaying(false)
+      return
+    }
 
     try {
       const createRes = await fetch('/api/razorpay/create-order', {
@@ -106,7 +112,7 @@ export default function CheckoutPage() {
 
       const selectedAddress = addresses.find((a) => a.id === selectedAddressId)
 
-      const rzp = new window.Razorpay({
+      const rzp = new RazorpayCheckout({
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: createData.amount,
         currency: createData.currency,
@@ -160,10 +166,6 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-cream)]">
-      <Script
-        src="https://checkout.razorpay.com/v1/checkout.js"
-        onLoad={() => setScriptLoaded(true)}
-      />
       <Navbar />
 
       <main className="pt-24 pb-16">

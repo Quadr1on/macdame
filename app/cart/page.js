@@ -3,14 +3,18 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { Button } from '@/components/ui/button'
 import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, Package, Truck, ShieldCheck } from 'lucide-react'
 import useCartStore from '@/lib/cart-store'
+import { useAuth } from '@/lib/auth-context'
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, clearCart, getSubtotal, getTotalItems, getTotalSavings } = useCartStore()
+  const { user } = useAuth()
+  const router = useRouter()
   const [mounted, setMounted] = useState(false)
 
   // Prevent hydration mismatch (Zustand persist loads from localStorage)
@@ -263,6 +267,7 @@ export default function CartPage() {
 
                   {/* Checkout Button */}
                   <Button
+                    onClick={() => router.push(user ? '/checkout' : '/login?next=/checkout')}
                     className="w-full py-6 text-base font-semibold text-[var(--color-cream)] bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 gap-2"
                   >
                     <ShoppingBag className="w-5 h-5" />

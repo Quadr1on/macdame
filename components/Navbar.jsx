@@ -25,13 +25,23 @@ import { useCollectionsMenu } from '@/lib/collections-menu'
 // Shared serif style for nav labels
 const serif = { fontFamily: 'var(--font-playfair), Georgia, serif' }
 
+// Collections promoted out of the dropdown into their own top-level nav item.
+// Still driven off the database list, so a pinned slug that hasn't been created
+// yet simply doesn't render — it can't 404 the way the old hardcoded
+// /collections/uniforms link did.
+const pinnedCollectionSlugs = ['uniforms']
+
 // "Collections" points at /shop rather than /collections — the latter has no
 // page and always 404'd. Individual collections come from the database, so a
 // new one created in /admin appears here without a code change.
 function buildNavLinks(collections) {
+  const pinned = collections.filter((c) => pinnedCollectionSlugs.includes(c.slug))
+  const grouped = collections.filter((c) => !pinnedCollectionSlugs.includes(c.slug))
+
   return [
     { name: 'Home', href: '/' },
-    { name: 'Collections', href: '/shop', dropdown: collections },
+    { name: 'Collections', href: '/shop', dropdown: grouped },
+    ...pinned.map(({ name, href }) => ({ name, href })),
     { name: 'Contact', href: '/contact' },
   ]
 }

@@ -5,32 +5,99 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { ShoppingBag, Menu, X, User, LogOut, LogIn, ChevronDown, ChevronRight } from 'lucide-react'
+import {
+  ShoppingBag,
+  Menu,
+  X,
+  User,
+  LogOut,
+  LogIn,
+  ChevronDown,
+  ChevronRight,
+  Package,
+  MapPin,
+  LayoutDashboard,
+} from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
 import useCartStore from '@/lib/cart-store'
+import { useCollectionsMenu } from '@/lib/collections-menu'
 
 // Shared serif style for nav labels
 const serif = { fontFamily: 'var(--font-playfair), Georgia, serif' }
 
-const collectionsMenu = [
-  { name: 'Men', href: '/collections/men' },
-  { name: 'Women', href: '/collections/women' },
-  { name: 'Kids', href: '/collections/kids' },
+// "Collections" points at /shop rather than /collections — the latter has no
+// page and always 404'd. Individual collections come from the database, so a
+// new one created in /admin appears here without a code change.
+function buildNavLinks(collections) {
+  return [
+    { name: 'Home', href: '/' },
+    { name: 'Collections', href: '/shop', dropdown: collections },
+    { name: 'Contact', href: '/contact' },
+  ]
+}
+
+const accountLinks = [
+  { name: 'My Orders', href: '/account/orders', icon: Package },
+  { name: 'Saved Addresses', href: '/account/addresses', icon: MapPin },
 ]
 
-const navLinks = [
-  { name: 'Home', href: '/' },
-  { name: 'Collections', href: '/collections', dropdown: collectionsMenu },
-  { name: 'Uniforms', href: '/collections/uniforms' },
-  { name: 'Contact', href: '/contact' },
-]
+// One definition rendered in two places — the desktop dropdown and the mobile
+// full-screen menu — so account links can never drift between the two.
+// `className` carries the positioning, which is all that differs: the desktop
+// panel drops down from the avatar, the mobile one opens upward.
+function ProfileMenu({ user, userName, isAdmin, onNavigate, onSignOut, className }) {
+  return (
+    <div
+      className={`w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 ${className}`}
+    >
+      <div className="px-4 py-3 border-b border-gray-100">
+        <p className="text-sm font-semibold text-gray-900 truncate">{userName}</p>
+        <p className="text-xs text-gray-500 truncate">{user.email}</p>
+      </div>
+
+      {accountLinks.map(({ name, href, icon: Icon }) => (
+        <Link
+          key={href}
+          href={href}
+          onClick={onNavigate}
+          className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-secondary)]/10 hover:text-[var(--color-primary)] transition-colors"
+        >
+          <Icon className="h-4 w-4" />
+          {name}
+        </Link>
+      ))}
+
+      {isAdmin && (
+        <Link
+          href="/admin"
+          onClick={onNavigate}
+          className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-secondary)]/10 hover:text-[var(--color-primary)] transition-colors"
+        >
+          <LayoutDashboard className="h-4 w-4" />
+          Admin Dashboard
+        </Link>
+      )}
+
+      <div className="border-t border-gray-100 mt-1 pt-1">
+        <button
+          onClick={onSignOut}
+          className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
+        >
+          <LogOut className="h-4 w-4" />
+          Sign Out
+        </button>
+      </div>
+    </div>
+  )
+}
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isCollectionsOpen, setIsCollectionsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const { user, loading, signOut } = useAuth()
+  const collections = useCollectionsMenu()
+  const { user, loading, isAdmin, signOut } = useAuth()
   const totalItems = useCartStore((state) => state.getTotalItems())
   const profileRef = useRef(null)
   const mobileProfileRef = useRef(null)
@@ -85,6 +152,8 @@ export default function Navbar() {
     document.body.style.overflow = isMenuOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [isMenuOpen])
+
+  const navLinks = buildNavLinks(collections)
 
   const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture
   const userName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email
@@ -196,22 +265,17 @@ export default function Navbar() {
 
                   {/* Profile Dropdown */}
                   {isProfileOpen && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                      <div className="px-4 py-3 border-b border-gray-100">
-                        <p className="text-sm font-semibold text-gray-900 truncate">{userName}</p>
-                        <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                      </div>
-                      <button
-                        onClick={() => {
-                          setIsProfileOpen(false)
-                          signOut()
-                        }}
-                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        Sign Out
-                      </button>
-                    </div>
+                    <ProfileMenu
+                      user={user}
+                      userName={userName}
+                      isAdmin={isAdmin}
+                      onNavigate={() => setIsProfileOpen(false)}
+                      onSignOut={() => {
+                        setIsProfileOpen(false)
+                        signOut()
+                      }}
+                      className="absolute right-0 mt-2 animate-in fade-in slide-in-from-top-2 duration-200"
+                    />
                   )}
                 </div>
               ) : (
@@ -369,22 +433,17 @@ export default function Navbar() {
                       </button>
 
                       {isProfileOpen && (
-                        <div className="absolute bottom-full left-0 mb-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2">
-                          <div className="px-4 py-3 border-b border-gray-100">
-                            <p className="text-sm font-semibold text-gray-900 truncate">{userName}</p>
-                            <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                          </div>
-                          <button
-                            onClick={() => {
-                              closeMenu()
-                              signOut()
-                            }}
-                            className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
-                          >
-                            <LogOut className="h-4 w-4" />
-                            Sign Out
-                          </button>
-                        </div>
+                        <ProfileMenu
+                          user={user}
+                          userName={userName}
+                          isAdmin={isAdmin}
+                          onNavigate={closeMenu}
+                          onSignOut={() => {
+                            closeMenu()
+                            signOut()
+                          }}
+                          className="absolute bottom-full left-0 mb-2"
+                        />
                       )}
                     </div>
                   ) : (

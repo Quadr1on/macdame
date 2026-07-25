@@ -13,16 +13,15 @@ import {
   Send,
   Heart
 } from 'lucide-react'
+import { useCollectionsMenu } from '@/lib/collections-menu'
 
 export default function Footer() {
+  // Same database-backed list the navbar uses, so the shop column can't drift
+  // back into linking at collections that don't exist.
+  const collections = useCollectionsMenu()
+
   const footerLinks = {
-    shop: [
-      { name: 'All Products', href: '/shop' },
-      { name: 'Sarees', href: '/collections/sarees' },
-      { name: 'Men\'s Wear', href: '/collections/mens' },
-      { name: 'Bridal', href: '/collections/bridal' },
-      { name: 'New Arrivals', href: '/new-arrivals' },
-    ],
+    shop: [{ name: 'All Products', href: '/shop' }, ...collections],
     support: [
       { name: 'Contact Us', href: '/contact' },
       { name: 'FAQs', href: '/faqs' },

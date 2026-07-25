@@ -1,0 +1,51 @@
+import { NextResponse } from 'next/server'
+import { requireAdminApi } from '@/lib/admin-auth'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { isValidOrderStatus } from '@/lib/order-status'
+
+export async function PATCH(request, { params }) {
+  const guard = await requireAdminApi()
+  if (guard.response) return guard.response
+
+  const { id } = await params
+  const body = await request.json().catch(() => ({}))
+  const { order_status: orderStatus, tracking_number: trackingNumber } = body
+
+  const updates = { updated_at: new Date().toISOString() }
+
+  if (orderStatus !== undefined) {
+    // Validated here rather than left to the DB: orders.order_status has a
+    // CHECK constraint, and an unknown value would surface as an opaque 500
+    // instead of a message the admin can act on.
+    if (!isValidOrderStatus(orderStatus)) {
+      return NextResponse.json({ error: `Invalid order status: ${orderStatus}` }, { status: 400 })
+    }
+    updates.order_status = orderStatus
+  }
+
+  if (trackingNumber !== undefined) {
+    const trimmed = typeof trackingNumber === 'string' ? trackingNumber.trim() : ''
+    // Store NULL rather than '' when cleared, so the customer page's
+    // "To be decided" fallback keeps working.
+    updates.tracking_number = trimmed === '' ? null : trimmed
+  }
+
+  if (Object.keys(updates).length === 1) {
+    return NextResponse.json({ error: 'Nothing to update' }, { status: 400 })
+  }
+
+  // Service role: orders has a SELECT-only RLS policy and no UPDATE policy, so
+  // the cookie-scoped anon client cannot write here.
+  const admin = createAdminClient()
+  const { data, error } = await admin
+    .from('orders')
+    .update(updates)
+    .eq('id', id)
+    .select('id, order_status, tracking_number')
+    .maybeSingle()
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (!data) return NextResponse.json({ error: 'Order not found' }, { status: 404 })
+
+  return NextResponse.json({ order: data })
+}

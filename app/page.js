@@ -3,13 +3,16 @@ import Hero from '@/components/Hero'
 import FeaturedProducts from '@/components/FeaturedProducts'
 import Collections from '@/components/Collections'
 import Footer from '@/components/Footer'
-import { getFeaturedProducts } from '@/lib/products'
+import { getFeaturedProducts, getAllCategories } from '@/lib/products'
 
 // Catalog data is public — cache the rendered page and refresh every 5 min
 export const revalidate = 300
 
 export default async function Home() {
-  const featuredProducts = await getFeaturedProducts(4)
+  const [featuredProducts, collections] = await Promise.all([
+    getFeaturedProducts(4),
+    getAllCategories(),
+  ])
 
   return (
     <div className="min-h-screen bg-[var(--color-cream)]">
@@ -17,7 +20,7 @@ export default async function Home() {
       <main>
         <Hero />
         <FeaturedProducts products={featuredProducts} />
-        <Collections />
+        <Collections collections={collections} />
       </main>
       <Footer />
     </div>

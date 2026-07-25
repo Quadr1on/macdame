@@ -30,7 +30,7 @@ function SuccessContent() {
           Order number: <span className="font-semibold text-gray-800">{orderNumber}</span>
         </p>
       )}
-      <div className="flex gap-3">
+      <div className="flex gap-3 flex-wrap justify-center">
         <Link href="/shop">
           <Button
             variant="outline"
@@ -39,12 +39,15 @@ function SuccessContent() {
             Continue Shopping
           </Button>
         </Link>
-        <Link href="/">
+        <Link href={orderNumber ? `/account/orders/${orderNumber}` : '/account/orders'}>
           <Button className="text-[var(--color-cream)] bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)]">
-            Back to Home
+            View Order Details
           </Button>
         </Link>
       </div>
+      <Link href="/" className="mt-4 text-sm text-gray-500 hover:text-[var(--color-primary)]">
+        Back to home
+      </Link>
     </div>
   )
 }

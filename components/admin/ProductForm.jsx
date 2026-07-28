@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Panel, adminPrimaryButton } from '@/components/admin/ui'
+import { Panel, adminPrimaryButton, adminDangerIconButton } from '@/components/admin/ui'
 import ImageUploader from '@/components/admin/ImageUploader'
 import { Plus, Trash2, AlertTriangle } from 'lucide-react'
 import { slugify } from '@/lib/utils'
@@ -332,7 +332,7 @@ export default function ProductForm({ categories, product = null }) {
                   type="button"
                   onClick={() => setVariants((prev) => prev.filter((_, i) => i !== index))}
                   disabled={variants.length === 1}
-                  className="h-9 rounded-md p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-30 disabled:hover:bg-transparent justify-self-start"
+                  className={`h-9 justify-self-start ${adminDangerIconButton}`}
                   aria-label="Remove variant"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -395,7 +395,7 @@ export default function ProductForm({ categories, product = null }) {
                   <button
                     type="button"
                     onClick={() => set('highlights', form.highlights.filter((_, i) => i !== index))}
-                    className="rounded-md p-2 text-slate-400 hover:bg-red-50 hover:text-red-600"
+                    className={adminDangerIconButton}
                     aria-label="Remove highlight"
                   >
                     <Trash2 className="h-4 w-4" />

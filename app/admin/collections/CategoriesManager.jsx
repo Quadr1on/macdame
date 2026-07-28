@@ -21,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { EmptyState, adminPrimaryButton } from '@/components/admin/ui'
+import { EmptyState, adminPrimaryButton, adminIconButton } from '@/components/admin/ui'
 import ImageUploader from '@/components/admin/ImageUploader'
 import { Plus, Pencil, ExternalLink, FolderTree } from 'lucide-react'
 import { slugify } from '@/lib/utils'
@@ -146,7 +146,7 @@ export default function CategoriesManager({ categories }) {
                     <button
                       type="button"
                       onClick={() => openEdit(category)}
-                      className="rounded-md p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-900"
+                      className={adminIconButton}
                       aria-label={`Edit ${category.name}`}
                     >
                       <Pencil className="h-4 w-4" />

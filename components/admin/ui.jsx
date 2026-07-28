@@ -1,6 +1,18 @@
 // Small presentational primitives shared across the admin pages. Plain markup,
 // no client hooks, so server components can render them directly.
 
+/**
+ * The admin's primary button treatment: pass as `className` to <Button>.
+ *
+ * The admin deliberately uses a neutral slate action colour rather than the
+ * storefront's brown, so it reads as a tool instead of a shop. Defined once
+ * here because the foreground colour is the important part — five call sites
+ * previously set `bg-slate-900` alone and inherited the near-black body colour,
+ * rendering black text on a black button.
+ */
+export const adminPrimaryButton =
+  'bg-slate-900 text-white hover:bg-slate-800 focus-visible:ring-slate-400'
+
 export function PageHeader({ title, description, children }) {
   return (
     <div className="flex items-start justify-between gap-4 flex-wrap mb-6">

@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { AlertTriangle, Check } from 'lucide-react'
+import { adminPrimaryButton } from '@/components/admin/ui'
 import { ORDER_STATUSES, orderStatusMeta } from '@/lib/order-status'
 
 export default function OrderStatusForm({ orderId, initialStatus, initialTracking }) {
@@ -99,7 +100,7 @@ export default function OrderStatusForm({ orderId, initialStatus, initialTrackin
       )}
 
       <div className="flex items-center gap-3">
-        <Button type="submit" disabled={saving || !dirty} className="bg-slate-900 hover:bg-slate-800">
+        <Button type="submit" disabled={saving || !dirty} className={adminPrimaryButton}>
           {saving ? 'Saving…' : 'Save changes'}
         </Button>
         {saved && !dirty && (

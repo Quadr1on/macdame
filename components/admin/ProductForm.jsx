@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Panel } from '@/components/admin/ui'
+import { Panel, adminPrimaryButton } from '@/components/admin/ui'
 import ImageUploader from '@/components/admin/ImageUploader'
 import { Plus, Trash2, AlertTriangle } from 'lucide-react'
 import { slugify } from '@/lib/utils'
@@ -451,7 +451,7 @@ export default function ProductForm({ categories, product = null }) {
         )}
 
         <div className="flex flex-wrap items-center gap-2">
-          <Button type="submit" disabled={saving} className="bg-slate-900 hover:bg-slate-800">
+          <Button type="submit" disabled={saving} className={adminPrimaryButton}>
             {saving ? 'Saving…' : isEdit ? 'Save changes' : 'Create product'}
           </Button>
           <Link href="/admin/products">

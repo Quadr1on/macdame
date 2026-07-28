@@ -21,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { EmptyState } from '@/components/admin/ui'
+import { EmptyState, adminPrimaryButton } from '@/components/admin/ui'
 import ImageUploader from '@/components/admin/ImageUploader'
 import { Plus, Pencil, ExternalLink, FolderTree } from 'lucide-react'
 import { slugify } from '@/lib/utils'
@@ -86,7 +86,7 @@ export default function CategoriesManager({ categories }) {
   return (
     <>
       <div className="flex justify-end mb-4">
-        <Button onClick={openAdd} className="gap-1.5 bg-slate-900 hover:bg-slate-800">
+        <Button onClick={openAdd} className={`gap-1.5 ${adminPrimaryButton}`}>
           <Plus className="h-4 w-4" />
           Add collection
         </Button>
@@ -231,7 +231,7 @@ export default function CategoriesManager({ categories }) {
             />
 
             <DialogFooter>
-              <Button type="submit" disabled={saving} className="bg-slate-900 hover:bg-slate-800">
+              <Button type="submit" disabled={saving} className={adminPrimaryButton}>
                 {saving ? 'Saving…' : editing ? 'Save changes' : 'Add collection'}
               </Button>
             </DialogFooter>

@@ -1,5 +1,44 @@
 @import "tailwindcss";
 
+/* Register the shadcn design tokens with Tailwind v4.
+ *
+ * The tokens below are declared as bare HSL triplets (`240 5.9% 10%`) — the
+ * Tailwind v3 convention, where a tailwind.config.js wrapped them in hsl().
+ * This project is on v4 with no config file, so without this block none of
+ * them reach the utility layer: `bg-background`, `bg-muted`, `border-input`,
+ * `text-muted-foreground` and friends all silently emitted nothing. That left
+ * Dialog panels and Select dropdowns fully transparent, and any button relying
+ * on a variant for its text colour rendering near-black on near-black.
+ *
+ * `inline` matters: it makes the generated utilities resolve var(--background)
+ * at use time rather than baking in the :root value, so the .dark overrides
+ * below keep working.
+ *
+ * primary/secondary are deliberately absent. Tailwind v4's colour namespace is
+ * --color-*, and the brand palette already owns --color-primary (#8b4513) and
+ * --color-secondary (#d4af37), which the storefront reads through
+ * var(--color-primary). Mapping shadcn's near-black --primary onto that name
+ * would repaint the entire storefront. The three components that referenced
+ * those two tokens carry explicit colours instead.
+ */
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

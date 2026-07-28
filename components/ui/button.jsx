@@ -9,16 +9,27 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        // Brand brown on cream. Written as explicit brand vars rather than
+        // `bg-primary`, because Tailwind v4's colour namespace is --color-*,
+        // which the storefront palette already owns — see the note in
+        // globals.css. Every variant must set its own foreground: without one
+        // the label falls back to the inherited body colour, which is how the
+        // admin ended up with near-black text on near-black buttons.
+        default:
+          "bg-[var(--color-primary)] text-[var(--color-cream)] shadow-xs hover:bg-[var(--color-primary-dark)]",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
           "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        // --secondary and --muted hold identical values, as do
+        // --secondary-foreground and --accent-foreground, so this is the same
+        // grey chip as before — just expressed with tokens that are actually
+        // registered.
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "bg-muted text-accent-foreground hover:bg-muted/80",
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
+        link: "text-[var(--color-primary)] underline-offset-4 hover:underline",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

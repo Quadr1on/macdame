@@ -1,6 +1,7 @@
 'use client'
 import { useRef, useState } from 'react'
 import { ImagePlus, Loader2, Star, Trash2, ArrowLeft, ArrowRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 /**
  * Uploads images through /api/admin/upload and hands back their public URLs.
@@ -146,11 +147,12 @@ export default function ImageUploader({ value = [], onChange, multiple = true, l
           </ul>
         )}
 
-        <button
+        <Button
           type="button"
+          variant="outline"
           onClick={() => inputRef.current?.click()}
           disabled={uploading > 0}
-          className="flex w-full items-center justify-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50 disabled:opacity-60"
+          className="w-full"
         >
           {uploading > 0 ? (
             <>
@@ -163,7 +165,7 @@ export default function ImageUploader({ value = [], onChange, multiple = true, l
               {value.length > 0 ? 'Add more images' : 'Upload images'}
             </>
           )}
-        </button>
+        </Button>
 
         <p className="mt-2 text-center text-xs text-slate-500">
           Drag and drop, or click to browse. JPEG, PNG, WebP, AVIF or GIF up to 5 MB each.

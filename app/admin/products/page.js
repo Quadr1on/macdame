@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { Button } from '@/components/ui/button'
-import { PageHeader, Panel, EmptyState } from '@/components/admin/ui'
+import { PageHeader, Panel, EmptyState, adminPrimaryButton } from '@/components/admin/ui'
 import ProductsTable from './ProductsTable'
 
 export default async function AdminProductsPage() {
@@ -26,7 +26,7 @@ export default async function AdminProductsPage() {
         }
       >
         <Link href="/admin/products/new">
-          <Button className="gap-1.5 bg-slate-900 hover:bg-slate-800">
+          <Button className={`gap-1.5 ${adminPrimaryButton}`}>
             <Plus className="h-4 w-4" />
             Add product
           </Button>

@@ -50,29 +50,30 @@ brown/gold palette is byte-for-byte unchanged.
 
 ## Tasks
 
-- [ ] **T01** `fix(theme)` Register the shadcn design tokens with Tailwind v4
+- [x] **T01** `fix(theme)` Register the shadcn design tokens with Tailwind v4
       files: `app/globals.css` · done when: browser probe reports a real colour (not `DEAD`) for
       `bg-background`, `bg-muted`, `bg-accent`, `bg-popover`, `bg-card`, `bg-destructive`,
       `border-input`, `text-muted-foreground`, `text-foreground`, `ring-ring` — **and**
       `getComputedStyle` still reports `--color-primary` as `#8b4513` · verify: `npm run lint` + probe
 
-- [ ] **T02** `fix(ui)` Give Button, Badge and Input explicit colours instead of the colliding tokens
+- [x] **T02** `fix(ui)` Give Button, Badge and Input explicit colours instead of the colliding tokens
       files: `components/ui/button.jsx`, `components/ui/badge.jsx`, `components/ui/input.jsx`
       done when: a bare `<Button>` renders brand-brown background with cream text, and no variant
       depends on `bg-primary`/`text-primary-foreground`/`bg-secondary` · verify: `npm run lint` + probe
 
-- [ ] **T03** `fix(admin)` Replace the five hand-rolled `bg-slate-900` buttons with one shared admin treatment
+- [x] **T03** `fix(admin)` Replace the five hand-rolled `bg-slate-900` buttons with one shared admin treatment
       files: `components/admin/ui.jsx`, `app/admin/products/page.js`,
       `app/admin/collections/CategoriesManager.jsx`, `components/admin/ProductForm.jsx`,
       `app/admin/orders/[id]/OrderStatusForm.jsx` · done when: every admin button sets its own
       foreground colour; no `bg-slate-*` without a paired `text-*` · verify: `npm run lint`
 
-- [ ] **T04** `fix(admin)` Opaque surfaces and visible focus rings on admin dialogs, selects and inputs
+- [x] **T04** `fix(admin)` Opaque surfaces and visible focus rings on admin dialogs, selects and inputs
+      *(surfaces needed no change — T01 fixed them; the focus half was real)*
       files: `components/ui/dialog.jsx`, `components/ui/select.jsx` · done when: the Collections
       modal and the order-status dropdown render on an opaque panel, and tabbing to any admin
       control shows a focus ring · verify: `npm run lint` + browser
 
-- [ ] **T05** `docs(research)` Shiprocket vs. Macdame's cart abandonment — memo, pressure-tested by the LLM council
+- [x] **T05** `docs(research)` Shiprocket vs. Macdame's cart abandonment — memo, pressure-tested by the LLM council
       files: `docs/research/shiprocket-cart-abandonment.md` · done when: the memo states what
       Shiprocket does and does not address, grounded in this repo's actual checkout code, with the
       council's dissent recorded rather than smoothed over · verify: manual read
@@ -81,11 +82,11 @@ brown/gold palette is byte-for-byte unchanged.
 
 | Task | Commit | Tag | Status |
 |------|--------|-----|--------|
-| T01  |        |     | pending |
-| T02  |        |     | pending |
-| T03  |        |     | pending |
-| T04  |        |     | pending |
-| T05  |        |     | pending |
+| T01  | `e0fd66c` | `admin-ui-consistency-t01` | done |
+| T02  | `f2f65a2` | `admin-ui-consistency-t02` | done |
+| T03  | `b8bfdcd` | `admin-ui-consistency-t03` | done |
+| T04  | `fbacff1` | `admin-ui-consistency-t04` | done |
+| T05  | `f335afc` | `admin-ui-consistency-t05` | done |
 
 Revert any single task: `git revert <commit>`
 

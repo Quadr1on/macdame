@@ -162,8 +162,6 @@ export default function CollectionContent({ category, products }) {
                           initial={{ opacity: 0, scale: 0.85 }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.85 }}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
                           onClick={handleClearFilters}
                           className="text-sm text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] transition-colors font-medium"
                         >
@@ -267,14 +265,12 @@ export default function CollectionContent({ category, products }) {
                     <p className="text-gray-500 mb-6">
                       Try widening your price range to see more of the collection.
                     </p>
-                    <motion.button
-                      whileHover={{ scale: 1.04 }}
-                      whileTap={{ scale: 0.96 }}
+                    <button
                       onClick={handleClearFilters}
                       className="text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] font-medium transition-colors"
                     >
                       Clear all filters
-                    </motion.button>
+                    </button>
                   </motion.div>
                 )}
               </div>

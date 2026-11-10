@@ -166,6 +166,7 @@ export default function ProductDetail({ product }) {
                       <button
                         key={i}
                         onClick={() => setSelectedImage(i)}
+                        data-press="off"
                         className={`rounded-full transition-all duration-300 ${
                           i === selectedImage
                             ? 'w-6 h-2 bg-[var(--color-secondary)]'

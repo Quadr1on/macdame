@@ -121,6 +121,118 @@
   }
 }
 
+/* ------------------------------------------------------------------------
+ * Motion
+ *
+ * One micro-interaction system for every control on the site, so press and
+ * hover feedback feel identical whether a button is a shadcn <Button>, a
+ * hand-rolled <button>, or a <Link> rendered through <Button asChild>.
+ * ---------------------------------------------------------------------- */
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --duration-press: 160ms;
+  --duration-popover: 180ms;
+  --duration-modal: 240ms;
+}
+
+/* Press feedback.
+ *
+ * Deliberately unlayered: unlayered CSS beats every Tailwind utility layer, so
+ * this one rule replaces the scattered `transition-all duration-300` that each
+ * button set for itself — those made hover colours lag and, with
+ * transition-colors, made a press scale snap instead of ease. Listing the
+ * properties (never `all`) keeps layout properties out of it.
+ *
+ * It transitions the `scale`/`translate` properties rather than `transform`:
+ * Tailwind v4's scale and translate utilities use those, and framer-motion
+ * writes inline `transform`, which must not be smoothed a second time by CSS.
+ *
+ * Opt a control out with data-press="off" (e.g. the gallery dots, which
+ * animate their own width and are too small to press-scale).
+ */
+:where(button, [role="button"], a[data-slot="button"], input[type="submit"], input[type="button"]):not([data-press="off"]) {
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, box-shadow, opacity, scale, translate;
+  transition-duration: var(--duration-press);
+  transition-timing-function: var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+:where(button, [role="button"], a[data-slot="button"], input[type="submit"], input[type="button"]):not([data-press="off"], :disabled, [aria-disabled="true"]):active {
+  scale: 0.97;
+}
+
+/* Fields: ease the focus ring and border in instead of snapping. */
+:where(input:not([type="checkbox"], [type="radio"], [type="range"]), textarea, select, [data-slot="select-trigger"]) {
+  transition-property: color, background-color, border-color, box-shadow, outline-color;
+  transition-duration: var(--duration-press);
+  transition-timing-function: var(--ease-out);
+}
+
+/* Popovers (dropdown menu, select). The shadcn components already carry
+ * `data-[state=open]:animate-in zoom-in-95` classes, but no animate plugin is
+ * loaded, so those classes emit nothing and the menus appeared instantly.
+ * Keyframes are correct here (not transitions) because Radix's Presence waits
+ * for `animationend` before unmounting on close. transform-origin is already
+ * set to the trigger by the components' origin-(--radix-…) class. */
+[data-slot="dropdown-menu-content"][data-state="open"],
+[data-slot="dropdown-menu-sub-content"][data-state="open"],
+[data-slot="select-content"][data-state="open"] {
+  animation: popover-in var(--duration-popover) var(--ease-out);
+}
+
+[data-slot="dropdown-menu-content"][data-state="closed"],
+[data-slot="dropdown-menu-sub-content"][data-state="closed"],
+[data-slot="select-content"][data-state="closed"] {
+  animation: popover-out 120ms var(--ease-out);
+}
+
+/* Dialog: centred, not trigger-anchored, so it scales from its own centre.
+ * Uses the `scale` property so it composes with the -50%/-50% `translate`
+ * that centres the panel. */
+[data-slot="dialog-overlay"][data-state="open"] { animation: fade-in var(--duration-modal) var(--ease-out); }
+[data-slot="dialog-overlay"][data-state="closed"] { animation: fade-out 160ms var(--ease-out); }
+[data-slot="dialog-content"][data-state="open"] { animation: popover-in var(--duration-modal) var(--ease-out); }
+[data-slot="dialog-content"][data-state="closed"] { animation: popover-out 160ms var(--ease-out); }
+
+@keyframes popover-in {
+  from { opacity: 0; scale: 0.96; }
+}
+
+@keyframes popover-out {
+  to { opacity: 0; scale: 0.96; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+@keyframes fade-out {
+  to { opacity: 0; }
+}
+
+/* Reduced motion: fewer and gentler, not none. Colour and opacity changes
+ * stay because they carry state; the scale movement goes. */
+@media (prefers-reduced-motion: reduce) {
+  :where(button, [role="button"], a[data-slot="button"], input[type="submit"], input[type="button"]):active {
+    scale: none;
+  }
+
+  [data-slot="dropdown-menu-content"][data-state="open"],
+  [data-slot="dropdown-menu-sub-content"][data-state="open"],
+  [data-slot="select-content"][data-state="open"],
+  [data-slot="dialog-content"][data-state="open"] {
+    animation-name: fade-in;
+  }
+
+  [data-slot="dropdown-menu-content"][data-state="closed"],
+  [data-slot="dropdown-menu-sub-content"][data-state="closed"],
+  [data-slot="select-content"][data-state="closed"],
+  [data-slot="dialog-content"][data-state="closed"] {
+    animation-name: fade-out;
+  }
+}
+
 /* Custom Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 10px;

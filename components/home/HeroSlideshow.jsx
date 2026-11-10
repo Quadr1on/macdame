@@ -5,11 +5,16 @@ import Link from 'next/link'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import Arrow from './Arrow'
+import { HOME_SLIDES } from '@/lib/hero-slides'
 
 gsap.registerPlugin(useGSAP)
 
 /*
- * The home hero: a full-screen slideshow split into two invisible halves.
+ * The full-screen hero slideshow, split into two invisible halves. Used on the
+ * home page (HOME_SLIDES, no visible title: the scroll logo stands in) and on
+ * every shop page (their own slides from lib/hero-slides, with `title` set
+ * large in the bottom-left corner). With a single slide it is a still photo:
+ * no halves, cursor, counter or autoplay.
  *
  * - On a mouse, the cursor over the hero becomes a large cream circle whose
  *   arrow points at the half it is on; a click on the left half goes back, on
@@ -22,64 +27,10 @@ gsap.registerPlugin(useGSAP)
  *   it, while the tab is hidden, and entirely under reduced motion.
  */
 
-const SLIDES = [
-  {
-    src: '/hero-fullwidth.png',
-    alt: 'A woman in a cream kasavu saree with a gold and magenta border, temple jewellery and jasmine in her hair',
-    name: 'Women',
-    line: 'Kasavu sarees with temple jewellery',
-    href: '/collections/women',
-    cta: 'Shop women',
-    pos: '50% 30%',
-    posPhone: '42% 50%',
-  },
-  {
-    src: '/collection-mens.png',
-    alt: 'Two men in cream kasavu shirts and mundus in a wood-panelled room',
-    name: 'Men',
-    line: 'Kasavu mundus, shirts and veshtis',
-    href: '/collections/men',
-    cta: 'Shop men',
-    pos: '50% 38%',
-    posPhone: '50% 50%',
-  },
-  {
-    src: '/collection-festive.png',
-    alt: 'Children’s festival silks in magenta, teal and orange laid out with jasmine and marigolds',
-    name: 'Kids',
-    line: 'Pattu pavadais and festival silks',
-    href: '/collections/kids',
-    cta: 'Shop kids',
-    pos: '50% 50%',
-    posPhone: '35% 50%',
-  },
-  {
-    src: '/hero-banner.png',
-    alt: 'A woman in a cream kasavu saree with a wide gold border on a wooden veranda',
-    name: 'Kasavu sarees',
-    line: 'Handloom cotton with a woven gold border',
-    href: '/collections/women',
-    cta: 'Shop sarees',
-    pos: '50% 26%',
-    posPhone: '50% 30%',
-    // The source carries white bands down both edges; this crop hides them.
-    crop: 1.3,
-  },
-  {
-    src: '/product-bridal-saree.png',
-    alt: 'A cream silk saree with a woven gold border draped on a wooden stand',
-    name: 'Silk sarees',
-    line: 'Kanchipuram, Mysore, Banarasi and Paithani silk',
-    href: '/shop',
-    cta: 'Shop all clothing',
-    pos: '50% 42%',
-    posPhone: '50% 45%',
-  },
-]
-
 const INTERVAL = 6.5
 
-export default function HeroSlideshow() {
+export default function HeroSlideshow({ slides: SLIDES = HOME_SLIDES, title, subtitle, label = 'MacDame collections' }) {
+  const multi = SLIDES.length > 1
   const root = useRef(null)
   const slideRefs = useRef([])
   const imgRefs = useRef([])
@@ -106,7 +57,7 @@ export default function HeroSlideshow() {
   // Move to the slide `dir` steps away (1 forward, -1 back).
   const go = contextSafe((dir) => {
     const s = state.current
-    if (s.busy) return
+    if (s.busy || SLIDES.length < 2) return
     const n = SLIDES.length
     const from = s.index
     const to = (from + dir + n) % n
@@ -161,7 +112,7 @@ export default function HeroSlideshow() {
   )
 
   // Autoplay with a progress line, paused on hover, hidden tabs and reduced motion.
-  const paused = hoverPaused || reduced
+  const paused = hoverPaused || reduced || !multi
   useGSAP(
     () => {
       timer.current?.kill()
@@ -264,7 +215,7 @@ export default function HeroSlideshow() {
       ref={root}
       className="relative h-svh min-h-[560px] touch-pan-y overflow-hidden bg-[var(--color-primary-dark)]"
       aria-roledescription="carousel"
-      aria-label="MacDame collections"
+      aria-label={label}
       onKeyDown={onKeyDown}
       onPointerEnter={(e) => {
         if (e.pointerType === 'mouse') setHoverPaused(true)
@@ -276,7 +227,7 @@ export default function HeroSlideshow() {
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
     >
-      <h1 className="sr-only">MacDame: kasavu and handloom wear from Kerala</h1>
+      {!title && <h1 className="sr-only">MacDame: kasavu and handloom wear from Kerala</h1>}
 
       {/* Slides */}
       {SLIDES.map((s, i) => (
@@ -306,9 +257,10 @@ export default function HeroSlideshow() {
       ))}
 
       {/* A soft shade at the foot keeps the caption readable on any photograph. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-64 bg-gradient-to-t from-black/45 to-transparent" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-[46%] bg-gradient-to-t from-black/60 via-black/25 to-transparent" />
 
-      {/* The two invisible halves */}
+      {/* The two invisible halves (only when there is more than one slide) */}
+      {multi && (<>
       <div className="absolute inset-0 z-10 grid grid-cols-2">
         {[-1, 1].map((dir) => (
           <button
@@ -336,22 +288,30 @@ export default function HeroSlideshow() {
           <Arrow className="size-4" />
         </span>
       </div>
+      </>)}
 
       {/* Caption, controls and progress, bottom right */}
       <div
-        className="page-wrap pointer-events-none absolute inset-x-0 bottom-0 z-20 flex justify-end pb-6 md:pb-10"
+        className={`page-wrap pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col gap-6 pb-6 md:flex-row md:items-end md:pb-10 ${title ? "md:justify-between" : "md:justify-end"}`}
       >
+        {/* A visible page title, bottom left (collection and shop pages) */}
+        {title && (
+          <div className="pointer-events-auto text-white" onPointerEnter={hideCursor}>
+            <h1 className="font-display text-[clamp(56px,7vw+12px,132px)] leading-[0.95] tracking-[-0.02em] [text-wrap:balance]">{title}</h1>
+            {subtitle && <p className="mt-3 text-white/80">{subtitle}</p>}
+          </div>
+        )}
         <div
           ref={captionRef}
           className="pointer-events-auto w-full max-w-sm text-white md:w-auto md:min-w-[22rem]"
           onPointerEnter={hideCursor}
           aria-live="polite"
         >
-          <div className="overflow-hidden">
+          {multi && <div className="overflow-hidden">
             <p data-rise className="text-sm text-white/75 tabular-nums">
               {String(index + 1).padStart(2, '0')} / {String(SLIDES.length).padStart(2, '0')}
             </p>
-          </div>
+          </div>}
           <div className="overflow-hidden">
             <p data-rise className="font-display text-[clamp(30px,2.4vw+12px,44px)] leading-[1.1]">{slide.name}</p>
           </div>
@@ -364,19 +324,19 @@ export default function HeroSlideshow() {
               {slide.cta}
               <Arrow />
             </Link>
-            <div className="flex items-center gap-1 [@media(hover:hover)_and_(pointer:fine)]:hidden">
+            {multi && <div className="flex items-center gap-1 [@media(hover:hover)_and_(pointer:fine)]:hidden">
               <button type="button" onClick={() => go(-1)} className="grid size-11 place-items-center rounded-full border border-white/50" aria-label="Previous slide">
                 <Arrow className="size-4 rotate-180" />
               </button>
               <button type="button" onClick={() => go(1)} className="grid size-11 place-items-center rounded-full border border-white/50" aria-label="Next slide">
                 <Arrow className="size-4" />
               </button>
-            </div>
+            </div>}
           </div>
 
-          <div className="mt-5 h-px w-full bg-white/30" aria-hidden="true">
+          {multi && <div className="mt-5 h-px w-full bg-white/30" aria-hidden="true">
             <div ref={progress} className="h-px w-full origin-left bg-white" />
-          </div>
+          </div>}
         </div>
       </div>
     </section>

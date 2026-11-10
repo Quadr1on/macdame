@@ -82,7 +82,8 @@ export default function Navbar() {
   const grouped = collections.filter((c) => !pinnedCollectionSlugs.includes(c.slug))
 
   // Pages that open on a full-screen photograph sit under a see-through bar.
-  const overPhoto = (pathname === '/' || pathname.startsWith('/collections/')) && !scrolled
+  const overPhoto =
+    (pathname === '/' || pathname === '/shop' || pathname.startsWith('/collections/')) && !scrolled
 
   const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture
   const userName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email

@@ -18,7 +18,7 @@ import { getFeaturedProducts, getAllCategories, getCategoryPriceFloors } from '@
  * pinned-chapters. Palette and type kept from the brand (cream, brown ink,
  * gold; Marcellus + Figtree).
  *
- * 1. hero          the h1, the from-prices, the saree photograph to the fold    1 screen
+ * 1. hero          one full-screen photograph, one button (h1 for readers)       1 screen
  * 2. collections   the range: every collection as a photograph tile              1 screen
  * 3. bestsellers   four featured products                                        1 screen
  * 4. ordering      dark band, pinned-chapters: three steps beside one frame      2 screens live
@@ -45,7 +45,7 @@ export default async function Home() {
     <div className="min-h-screen bg-[var(--color-cream)]">
       <Navbar />
       <main>
-        <HomeHero floors={floors} />
+        <HomeHero />
         <Collections collections={collections} />
         <FeaturedProducts products={featuredProducts} totalCount={totalCount} />
         <OrderChapters />

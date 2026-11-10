@@ -333,7 +333,7 @@ export default function HeroSlideshow() {
         className="pointer-events-none absolute left-0 top-0 z-30 hidden size-[30px] place-items-center rounded-full border border-white text-white [filter:drop-shadow(0_1px_6px_rgb(0_0_0/0.35))] [@media(hover:hover)_and_(pointer:fine)]:grid"
       >
         <span ref={cursorArrow} className="grid place-items-center">
-          <Arrow className="size-3" />
+          <Arrow className="size-4" />
         </span>
       </div>
 

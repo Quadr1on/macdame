@@ -83,7 +83,7 @@ export default function Collections({ collections = [] }) {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-100px' }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 auto-rows-[200px] md:auto-rows-[220px]"
+          className="grid grid-cols-1 md:grid-cols-3 gap-2.5 auto-rows-[200px] md:auto-rows-[220px]"
         >
           {collections.map((collection, index) => {
             const gridClass = gridClassFor(index, collections.length)
@@ -95,7 +95,7 @@ export default function Collections({ collections = [] }) {
               <motion.div key={collection.slug} variants={itemVariants} className={`${gridClass} group`}>
                 <Link
                   href={collection.href}
-                  className="relative block w-full h-full rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 bg-[var(--color-cream-dark)]"
+                  className="relative block w-full h-full rounded-none overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 bg-[var(--color-cream-dark)]"
                 >
                   {/* Background Image */}
                   {collection.image && (

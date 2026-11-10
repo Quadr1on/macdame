@@ -1,5 +1,7 @@
 import Navbar from '@/components/Navbar'
-import HomeHero from '@/components/home/HomeHero'
+import HeroSlideshow from '@/components/home/HeroSlideshow'
+import ScrollLogo from '@/components/home/ScrollLogo'
+import SmoothScroll from '@/components/home/SmoothScroll'
 import Collections from '@/components/Collections'
 import FeaturedProducts from '@/components/FeaturedProducts'
 import OrderChapters from '@/components/home/OrderChapters'
@@ -18,7 +20,8 @@ import { getFeaturedProducts, getAllCategories, getCategoryPriceFloors } from '@
  * pinned-chapters. Palette and type kept from the brand (cream, brown ink,
  * gold; Marcellus + Figtree).
  *
- * 1. hero          one full-screen photograph, one button (h1 for readers)       1 screen
+ * 1. hero          full-screen slideshow, left/right click halves with a circle
+ *                  cursor; the scroll logo shrinks out of its corner (zeyraglow) 1 screen
  * 2. collections   the range: every collection as a photograph tile              1 screen
  * 3. bestsellers   four featured products                                        1 screen
  * 4. ordering      dark band, pinned-chapters: three steps beside one frame      2 screens live
@@ -43,9 +46,11 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-[var(--color-cream)]">
+      <SmoothScroll />
       <Navbar />
+      <ScrollLogo />
       <main>
-        <HomeHero />
+        <HeroSlideshow />
         <Collections collections={collections} />
         <FeaturedProducts products={featuredProducts} totalCount={totalCount} />
         <OrderChapters />

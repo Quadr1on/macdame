@@ -69,6 +69,7 @@ export default function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)
+  const [pastHero, setPastHero] = useState(false)
   const collections = useCollectionsMenu()
   const { user, loading, isAdmin, signOut } = useAuth()
   const totalItems = useCartStore((state) => state.getTotalItems())
@@ -100,6 +101,7 @@ export default function Navbar() {
       frame = requestAnimationFrame(() => {
         const y = window.scrollY
         setScrolled(y > 24)
+        setPastHero(y > window.innerHeight * 0.85)
         if (Math.abs(y - lastY) > 6) {
           setHidden(y > lastY && y > 160)
           lastY = y
@@ -216,8 +218,16 @@ export default function Navbar() {
             </nav>
           </div>
 
-          {/* Centre: the logo */}
-          <Link href="/" className="flex items-center" aria-label="MacDame home">
+          {/* Centre: the logo. On the home page the large scroll logo stands
+              in for it — always on a desktop, and on a phone until the hero
+              has gone (the scroll logo fades out there). */}
+          <Link
+            href="/"
+            className={`flex items-center transition-opacity duration-300 ${
+              pathname === '/' ? (pastHero ? 'lg:invisible lg:opacity-0' : 'invisible opacity-0') : ''
+            }`}
+            aria-label="MacDame home"
+          >
             <Image
               src="/macdame.png"
               alt="MacDame"

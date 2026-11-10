@@ -330,10 +330,10 @@ export default function HeroSlideshow() {
         aria-hidden="true"
         // A transparent ring with a white outline and a white arrow. The faint
         // drop shadow keeps it visible over the brightest parts of a photo.
-        className="pointer-events-none absolute left-0 top-0 z-30 hidden size-16 place-items-center rounded-full border-[1.5px] border-white text-white [filter:drop-shadow(0_1px_6px_rgb(0_0_0/0.35))] [@media(hover:hover)_and_(pointer:fine)]:grid"
+        className="pointer-events-none absolute left-0 top-0 z-30 hidden size-[30px] place-items-center rounded-full border border-white text-white [filter:drop-shadow(0_1px_6px_rgb(0_0_0/0.35))] [@media(hover:hover)_and_(pointer:fine)]:grid"
       >
         <span ref={cursorArrow} className="grid place-items-center">
-          <Arrow className="size-4" />
+          <Arrow className="size-3" />
         </span>
       </div>
 

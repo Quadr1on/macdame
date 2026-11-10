@@ -200,8 +200,7 @@ export default function ProductCard({ product }) {
         {/* Name */}
         <Link href={href}>
           <h3 
-            className="font-medium text-gray-800 group-hover:text-[var(--color-primary)] transition-colors duration-300 line-clamp-2 leading-snug"
-            style={{ fontFamily: 'Georgia, serif' }}
+            className="font-display font-medium text-gray-800 group-hover:text-[var(--color-primary)] transition-colors duration-300 line-clamp-2 leading-snug"
           >
             {name}
           </h3>

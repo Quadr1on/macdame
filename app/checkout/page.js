@@ -171,8 +171,7 @@ export default function CheckoutPage() {
       <main className="pt-24 pb-16">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1
-            className="text-3xl md:text-4xl font-bold text-[var(--color-primary-dark)] mb-8"
-            style={{ fontFamily: 'Georgia, serif' }}
+            className="font-display text-3xl md:text-4xl font-bold text-[var(--color-primary-dark)] mb-8"
           >
             Checkout
           </h1>
@@ -192,7 +191,7 @@ export default function CheckoutPage() {
                 {/* Address selection */}
                 <div className="bg-white rounded-xl shadow-sm p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-bold text-gray-900" style={{ fontFamily: 'Georgia, serif' }}>
+                    <h2 className="font-display text-lg font-bold text-gray-900">
                       Delivery Address
                     </h2>
                     <Link
@@ -261,7 +260,7 @@ export default function CheckoutPage() {
 
                 {/* Items */}
                 <div className="bg-white rounded-xl shadow-sm p-6">
-                  <h2 className="text-lg font-bold text-gray-900 mb-4" style={{ fontFamily: 'Georgia, serif' }}>
+                  <h2 className="font-display text-lg font-bold text-gray-900 mb-4">
                     Items ({totalItems})
                   </h2>
                   <div className="space-y-3">
@@ -282,7 +281,7 @@ export default function CheckoutPage() {
               {/* Summary */}
               <div className="lg:w-96 flex-shrink-0">
                 <div className="bg-white rounded-xl shadow-sm p-6 sticky top-28 space-y-5">
-                  <h2 className="text-xl font-bold text-gray-900" style={{ fontFamily: 'Georgia, serif' }}>
+                  <h2 className="font-display text-xl font-bold text-gray-900">
                     Order Summary
                   </h2>
 

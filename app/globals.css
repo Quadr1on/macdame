@@ -37,6 +37,31 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+  --font-display: var(--type-display);
+  --font-sans: var(--type-body);
+}
+
+/* Typography. Two families, one role each:
+ *   font-display (Marcellus) — headings, product names, nav, collection titles
+ *   font-sans    (Figtree)   — body copy, prices, buttons, forms, all of admin
+ * Use the `font-display` class; never inline a fontFamily.
+ *
+ * Marcellus has a single weight. font-synthesis: none stops the browser faking
+ * bold or italic from it (a smeared, cheap look) when a heading also carries
+ * font-bold or italic, so hierarchy comes from size alone. */
+:root {
+  --type-display: var(--font-marcellus), Georgia, serif;
+  --type-body: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-display {
+  font-synthesis: none;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+}
+
+:where(h1, h2, h3) {
+  text-wrap: balance;
 }
 
 @layer base {

@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Phone, Mail, Instagram, Clock, Send } from 'lucide-react'
 
-const serif = { fontFamily: 'var(--font-playfair), Georgia, serif' }
 
 // Contact identity used across the site (footer + here). The phone number is
 // still the launch placeholder — swap it for the real business line before
@@ -96,8 +95,7 @@ export default function ContactContent() {
               >
                 <motion.h1
                   variants={item}
-                  className="text-3xl md:text-4xl font-bold text-[var(--color-primary-dark)]"
-                  style={serif}
+                  className="font-display text-3xl md:text-4xl font-bold text-[var(--color-primary-dark)]"
                 >
                   Contact Us
                 </motion.h1>

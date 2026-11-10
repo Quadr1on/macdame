@@ -17,8 +17,7 @@ function SuccessContent() {
         <CheckCircle2 className="w-10 h-10 text-green-600" />
       </div>
       <h1
-        className="text-3xl md:text-4xl font-bold text-[var(--color-primary-dark)] mb-3"
-        style={{ fontFamily: 'Georgia, serif' }}
+        className="font-display text-3xl md:text-4xl font-bold text-[var(--color-primary-dark)] mb-3"
       >
         Order Confirmed!
       </h1>

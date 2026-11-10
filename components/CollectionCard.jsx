@@ -36,7 +36,7 @@ export default function CollectionCard({ collection }) {
               {itemCount}+ Items
             </span>
             
-            <h3 className="text-2xl md:text-3xl font-bold text-white group-hover:text-[var(--color-secondary)] transition-colors">
+            <h3 className="font-display text-2xl md:text-3xl font-bold text-white group-hover:text-[var(--color-secondary)] transition-colors">
               {name}
             </h3>
             

@@ -37,8 +37,7 @@ export default function ShopContent({ products }) {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-3xl md:text-4xl font-bold text-[var(--color-primary-dark)] mb-8"
-            style={{ fontFamily: 'Georgia, serif' }}
+            className="font-display text-3xl md:text-4xl font-bold text-[var(--color-primary-dark)] mb-8"
           >
             Sarees
           </motion.h1>
@@ -124,7 +123,7 @@ export default function ShopContent({ products }) {
                     transition={{ duration: 0.3 }}
                     className="flex flex-col items-center justify-center py-20 text-center"
                   >
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    <h3 className="font-display text-xl font-semibold text-gray-900 mb-2">
                       No products found
                     </h3>
                     <p className="text-gray-500 mb-6">

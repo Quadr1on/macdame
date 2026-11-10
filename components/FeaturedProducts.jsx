@@ -13,7 +13,7 @@ export default function FeaturedProducts({ products = [] }) {
           <span className="text-sm font-semibold text-[var(--color-secondary)] tracking-wider uppercase">
             Curated Selection
           </span>
-          <h2 className="mt-2 text-3xl md:text-4xl font-bold text-gray-900">
+          <h2 className="font-display mt-2 text-3xl md:text-4xl font-bold text-gray-900">
             Featured Products
           </h2>
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">

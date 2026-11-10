@@ -21,7 +21,8 @@ a shopper finds a piece, trusts the brand, and checks out without friction.
 ## Brand Personality
 
 Heritage, handcrafted, warm. Kerala kasavu identity: cream surfaces, gold
-accents, deep brown ink, Playfair serif display type. Confident but quiet —
+accents, deep brown ink, Marcellus serif display type
+with Figtree for body and UI. Confident but quiet —
 the products (rich fabric photography) carry the drama.
 
 ## Anti-references

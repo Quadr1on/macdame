@@ -51,8 +51,7 @@ export default function OrdersPage() {
           <div className="flex items-start justify-between gap-4 mb-8">
             <div>
               <h1
-                className="text-3xl md:text-4xl font-bold text-[var(--color-primary-dark)]"
-                style={{ fontFamily: 'Georgia, serif' }}
+                className="font-display text-3xl md:text-4xl font-bold text-[var(--color-primary-dark)]"
               >
                 Your Orders
               </h1>
@@ -81,7 +80,7 @@ export default function OrdersPage() {
               <div className="w-20 h-20 rounded-full bg-[var(--color-cream-dark)] flex items-center justify-center mb-6">
                 <Package className="w-8 h-8 text-[var(--color-primary)]/40" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
+              <h2 className="font-display text-xl font-bold text-gray-900 mb-2">
                 No orders yet
               </h2>
               <p className="text-gray-500 mb-6 max-w-sm">

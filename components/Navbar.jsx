@@ -22,8 +22,6 @@ import { useAuth } from '@/lib/auth-context'
 import useCartStore from '@/lib/cart-store'
 import { useCollectionsMenu } from '@/lib/collections-menu'
 
-// Shared serif style for nav labels
-const serif = { fontFamily: 'var(--font-playfair), Georgia, serif' }
 
 // Collections promoted out of the dropdown into their own top-level nav item.
 // Still driven off the database list, so a pinned slug that hasn't been created
@@ -209,8 +207,7 @@ export default function Navbar() {
                 <div key={link.name} className="relative group">
                   <Link
                     href={link.href}
-                    className={`flex items-center gap-1 text-[15px] tracking-wide transition-colors duration-500 ${linkColorCls}`}
-                    style={serif}
+                    className={`font-display flex items-center gap-1 text-[15px] tracking-wide transition-colors duration-500 ${linkColorCls}`}
                     aria-haspopup="true"
                   >
                     {link.name}
@@ -225,8 +222,7 @@ export default function Navbar() {
                         <Link
                           key={item.name}
                           href={item.href}
-                          className="group/item flex items-center justify-between px-5 py-2.5 text-[15px] text-[var(--color-primary-dark)] hover:bg-[var(--color-secondary)]/10 hover:text-[var(--color-primary)] transition-colors focus:outline-none focus-visible:bg-[var(--color-secondary)]/10"
-                          style={serif}
+                          className="font-display group/item flex items-center justify-between px-5 py-2.5 text-[15px] text-[var(--color-primary-dark)] hover:bg-[var(--color-secondary)]/10 hover:text-[var(--color-primary)] transition-colors focus:outline-none focus-visible:bg-[var(--color-secondary)]/10"
                         >
                           {item.name}
                           <ChevronRight className="h-4 w-4 text-[var(--color-secondary)] transition-transform duration-200 group-hover/item:translate-x-1 motion-reduce:transition-none" />
@@ -239,8 +235,7 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-[15px] tracking-wide transition-colors duration-500 relative group ${linkColorCls}`}
-                  style={serif}
+                  className={`font-display text-[15px] tracking-wide transition-colors duration-500 relative group ${linkColorCls}`}
                 >
                   {link.name}
                   <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[var(--color-secondary)] group-hover:w-full transition-all duration-300 motion-reduce:transition-none" />
@@ -356,8 +351,7 @@ export default function Navbar() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.1 + i * 0.07, duration: 0.4, ease: 'easeOut' }}
                         onClick={() => setIsCollectionsOpen(!isCollectionsOpen)}
-                        className="w-full flex items-center justify-between py-3 text-3xl text-[var(--color-primary-dark)]"
-                        style={serif}
+                        className="font-display w-full flex items-center justify-between py-3 text-3xl text-[var(--color-primary-dark)]"
                         aria-expanded={isCollectionsOpen}
                       >
                         {link.name}
@@ -379,8 +373,7 @@ export default function Navbar() {
                                 key={item.name}
                                 href={item.href}
                                 onClick={closeMenu}
-                                className="flex items-center gap-2 py-2.5 text-lg text-[var(--color-primary-dark)]/75 hover:text-[var(--color-primary)] transition-colors"
-                                style={serif}
+                                className="font-display flex items-center gap-2 py-2.5 text-lg text-[var(--color-primary-dark)]/75 hover:text-[var(--color-primary)] transition-colors"
                               >
                                 <ChevronRight className="h-4 w-4 text-[var(--color-secondary)]" />
                                 {item.name}
@@ -400,8 +393,7 @@ export default function Navbar() {
                       <Link
                         href={link.href}
                         onClick={closeMenu}
-                        className="block py-3 text-3xl text-[var(--color-primary-dark)] hover:text-[var(--color-primary)] transition-colors"
-                        style={serif}
+                        className="font-display block py-3 text-3xl text-[var(--color-primary-dark)] hover:text-[var(--color-primary)] transition-colors"
                       >
                         {link.name}
                       </Link>

@@ -58,8 +58,7 @@ export default function CartPage() {
           >
             <div>
               <h1
-                className="text-3xl md:text-4xl font-bold text-[var(--color-primary-dark)]"
-                style={{ fontFamily: 'Georgia, serif' }}
+                className="font-display text-3xl md:text-4xl font-bold text-[var(--color-primary-dark)]"
               >
                 Shopping Cart
               </h1>
@@ -87,7 +86,7 @@ export default function CartPage() {
               <div className="w-24 h-24 rounded-full bg-[var(--color-cream-dark)] flex items-center justify-center mb-6">
                 <ShoppingBag className="w-10 h-10 text-[var(--color-primary)]/40" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
+              <h2 className="font-display text-2xl font-bold text-gray-900 mb-2">
                 Your cart is empty
               </h2>
               <p className="text-gray-500 mb-8 max-w-md">
@@ -137,8 +136,7 @@ export default function CartPage() {
                             <div className="flex items-start justify-between gap-2">
                               <Link href={item.href || '#'}>
                                 <h3
-                                  className="font-semibold text-gray-900 hover:text-[var(--color-primary)] transition-colors line-clamp-2 text-sm sm:text-base"
-                                  style={{ fontFamily: 'Georgia, serif' }}
+                                  className="font-display font-semibold text-gray-900 hover:text-[var(--color-primary)] transition-colors line-clamp-2 text-sm sm:text-base"
                                 >
                                   {item.name}
                                 </h3>
@@ -213,8 +211,7 @@ export default function CartPage() {
               >
                 <div className="bg-white rounded-xl shadow-sm p-6 sticky top-28 space-y-5">
                   <h2
-                    className="text-xl font-bold text-gray-900"
-                    style={{ fontFamily: 'Georgia, serif' }}
+                    className="font-display text-xl font-bold text-gray-900"
                   >
                     Order Summary
                   </h2>

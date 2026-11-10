@@ -15,7 +15,6 @@ import ProductCard from '@/components/ProductCard'
 import { Slider } from '@/components/ui/slider'
 import { ChevronRight, SlidersHorizontal } from 'lucide-react'
 
-const serif = { fontFamily: 'var(--font-playfair), Georgia, serif' }
 
 const MIN_PRICE = 0
 const MAX_PRICE = 20000
@@ -105,8 +104,7 @@ export default function CollectionContent({ category, products }) {
                   the homepage hero, at display scale. Everything else supports it. */}
               <motion.h1
                 variants={heroItem}
-                className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.05] tracking-tight [text-wrap:balance]"
-                style={serif}
+                className="font-display text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.05] tracking-tight [text-wrap:balance]"
               >
                 <span className="italic">{possessive(category.name)}</span>
                 <br />
@@ -259,7 +257,7 @@ export default function CollectionContent({ category, products }) {
                     transition={{ duration: 0.3 }}
                     className="flex flex-col items-center justify-center py-20 text-center"
                   >
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2" style={serif}>
+                    <h3 className="font-display text-xl font-semibold text-gray-900 mb-2">
                       Nothing here yet
                     </h3>
                     <p className="text-gray-500 mb-6">

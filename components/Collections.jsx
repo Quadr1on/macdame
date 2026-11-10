@@ -69,7 +69,7 @@ export default function Collections({ collections = [] }) {
           <span className="text-sm font-semibold text-[var(--color-secondary)] tracking-wider uppercase">
             Shop by Category
           </span>
-          <h2 className="mt-2 text-3xl md:text-4xl font-bold text-gray-900">
+          <h2 className="font-display mt-2 text-3xl md:text-4xl font-bold text-gray-900">
             Our Collections
           </h2>
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
@@ -128,10 +128,9 @@ export default function Collections({ collections = [] }) {
 
                     {/* Title */}
                     <h3
-                      className={`font-bold text-white leading-tight mb-1 md:mb-2 ${
+                      className={`font-display font-bold text-white leading-tight mb-1 md:mb-2 ${
                         isFeature ? 'text-2xl md:text-3xl' : 'text-lg md:text-xl'
                       }`}
-                      style={{ fontFamily: 'Georgia, serif' }}
                     >
                       {collection.name}
                     </h3>

@@ -111,13 +111,14 @@ export default function Navbar() {
   const mobileProfileRef = useRef(null)
   const pathname = usePathname()
 
-  // Pages that open with a full-bleed hero photo behind the bar (home + the
-  // collection landers) get the see-through treatment — everywhere else starts
-  // on a plain cream body, where transparent + white text would be unreadable.
-  // The bar also drops out of transparent mode while the full-screen menu is
-  // open, since that overlay is a solid cream sheet and a white close icon
-  // would vanish against it.
-  const hasHero = pathname === '/' || pathname.startsWith('/collections/')
+  // Pages that open with a full-bleed hero photo behind the bar (the collection
+  // landers) get the see-through treatment — everywhere else starts on a plain
+  // cream body, where transparent + white text would be unreadable. The home
+  // page is one of those now: its hero sets the headline on the cream ground
+  // and the photograph below it. The bar also drops out of transparent mode
+  // while the full-screen menu is open, since that overlay is a solid cream
+  // sheet and a white close icon would vanish against it.
+  const hasHero = pathname.startsWith('/collections/')
   const transparent = hasHero && !scrolled && !isMenuOpen
 
   const linkColorCls = transparent

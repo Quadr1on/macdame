@@ -7,8 +7,8 @@ export default function CollectionLoading() {
     <div className="min-h-screen bg-[var(--color-cream)]">
       <Navbar />
       <main>
-        <div className="h-svh min-h-[560px] animate-pulse bg-[var(--color-primary-dark)]" />
-        <div className="page-wrap py-16 lg:py-24">
+        <div className="h-[58svh] min-h-[500px] max-h-[760px] animate-pulse bg-[var(--color-primary-dark)]" />
+        <div className="page-wrap pb-16 pt-6 lg:pb-24 lg:pt-10">
           <div className="animate-pulse">
             <div className="h-10 w-72 rounded bg-[var(--color-cream-dark)]" />
             <div className="mt-8 flex gap-2">

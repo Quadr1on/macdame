@@ -29,7 +29,7 @@ gsap.registerPlugin(useGSAP)
 
 const INTERVAL = 6.5
 
-export default function HeroSlideshow({ slides: SLIDES = HOME_SLIDES, title, subtitle, label = 'MacDame collections' }) {
+export default function HeroSlideshow({ slides: SLIDES = HOME_SLIDES, title, subtitle, label = 'MacDame collections', compact = false }) {
   const multi = SLIDES.length > 1
   const root = useRef(null)
   const slideRefs = useRef([])
@@ -213,7 +213,7 @@ export default function HeroSlideshow({ slides: SLIDES = HOME_SLIDES, title, sub
     <section
       id="hero"
       ref={root}
-      className="relative h-svh min-h-[560px] touch-pan-y overflow-hidden bg-[var(--color-primary-dark)]"
+      className={`relative touch-pan-y overflow-hidden bg-[var(--color-primary-dark)] ${compact ? "h-[58svh] min-h-[500px] max-h-[760px]" : "h-svh min-h-[560px]"}`}
       aria-roledescription="carousel"
       aria-label={label}
       onKeyDown={onKeyDown}
@@ -257,7 +257,18 @@ export default function HeroSlideshow({ slides: SLIDES = HOME_SLIDES, title, sub
       ))}
 
       {/* A soft shade at the foot keeps the caption readable on any photograph. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-[46%] bg-gradient-to-t from-black/60 via-black/25 to-transparent" />
+      {/* In the compact hero the shade peaks above the cream fade and clears
+          again at the very bottom, so dark and cream never mix into grey. */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-x-0 bottom-0 z-[5] ${
+          compact
+            ? 'h-full bg-[linear-gradient(to_top,transparent_0%,rgb(0_0_0/0.5)_30%,rgb(0_0_0/0.22)_62%,transparent_100%)]'
+            : 'h-[46%] bg-gradient-to-t from-black/60 via-black/25 to-transparent'
+        }`}
+      />
+      {/* Compact (shop pages): the photo fades into the cream page below it. */}
+      {compact && <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-[6] h-28 bg-gradient-to-t from-[var(--color-cream)] via-[var(--color-cream)]/70 to-transparent" />}
 
       {/* The two invisible halves (only when there is more than one slide) */}
       {multi && (<>
@@ -292,13 +303,19 @@ export default function HeroSlideshow({ slides: SLIDES = HOME_SLIDES, title, sub
 
       {/* Caption, controls and progress, bottom right */}
       <div
-        className={`page-wrap pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col gap-6 pb-6 md:flex-row md:items-end md:pb-10 ${title ? "md:justify-between" : "md:justify-end"}`}
+        className={`page-wrap pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col gap-6 md:flex-row md:items-end ${compact ? "gap-4 pb-28 md:pb-32" : "pb-6 md:pb-10"} ${title ? "md:justify-between" : "md:justify-end"}`}
       >
         {/* A visible page title, bottom left (collection and shop pages) */}
         {title && (
           <div className="pointer-events-auto text-white" onPointerEnter={hideCursor}>
-            <h1 className="font-display text-[clamp(56px,7vw+12px,132px)] leading-[0.95] tracking-[-0.02em] [text-wrap:balance]">{title}</h1>
-            {subtitle && <p className="mt-3 text-white/80">{subtitle}</p>}
+            <h1
+              className={`font-display leading-[0.95] tracking-[-0.02em] [text-wrap:balance] ${
+                compact ? 'text-[clamp(44px,4.5vw+12px,96px)]' : 'text-[clamp(56px,7vw+12px,132px)]'
+              }`}
+            >
+              {title}
+            </h1>
+            {subtitle && <p className={`text-white/80 ${compact ? 'mt-2' : 'mt-3'}`}>{subtitle}</p>}
           </div>
         )}
         <div
@@ -307,19 +324,25 @@ export default function HeroSlideshow({ slides: SLIDES = HOME_SLIDES, title, sub
           onPointerEnter={hideCursor}
           aria-live="polite"
         >
-          {multi && <div className="overflow-hidden">
+          {/* In the compact hero a phone keeps only the controls: the title already fills the space. */}
+          {multi && <div className={`overflow-hidden ${compact ? 'hidden md:block' : ''}`}>
             <p data-rise className="text-sm text-white/75 tabular-nums">
               {String(index + 1).padStart(2, '0')} / {String(SLIDES.length).padStart(2, '0')}
             </p>
           </div>}
-          <div className="overflow-hidden">
-            <p data-rise className="font-display text-[clamp(30px,2.4vw+12px,44px)] leading-[1.1]">{slide.name}</p>
+          <div className={`overflow-hidden ${compact ? 'hidden md:block' : ''}`}>
+            <p
+              data-rise
+              className={`font-display leading-[1.1] ${compact ? 'text-[clamp(24px,1.4vw+12px,32px)]' : 'text-[clamp(30px,2.4vw+12px,44px)]'}`}
+            >
+              {slide.name}
+            </p>
           </div>
           <div className="overflow-hidden">
             <p data-rise className="mt-1 hidden text-white/85 md:block">{slide.line}</p>
           </div>
 
-          <div className="mt-5 flex items-center justify-between gap-4">
+          <div className={`flex items-center justify-between gap-4 ${compact ? 'mt-0 md:mt-4' : 'mt-5'}`}>
             <Link href={slide.href} className="btn bg-[var(--color-cream)] text-[var(--ink)] hover:bg-white">
               {slide.cta}
               <Arrow />

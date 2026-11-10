@@ -20,6 +20,7 @@ export default function ShopContent({ products, slides }) {
           title="All clothing"
           subtitle={`${products.length} pieces, sent from Kerala`}
           label="MacDame collections"
+          compact
         />
         <ProductBrowser
           products={products}

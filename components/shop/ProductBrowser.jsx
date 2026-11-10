@@ -31,7 +31,7 @@ export default function ProductBrowser({ products = [], activeSlug = null, headi
 
   return (
     <MotionConfig reducedMotion="user">
-      <section id="pieces" className="scroll-mt-16 py-16 lg:py-24" aria-labelledby="pieces-h">
+      <section id="pieces" className="scroll-mt-16 pb-16 pt-6 lg:pb-24 lg:pt-10" aria-labelledby="pieces-h">
         <div className="page-wrap">
           <div className="grid gap-3 lg:grid-cols-12 lg:items-end lg:gap-x-6">
             <h2 id="pieces-h" className="font-display t-h2 text-[var(--ink)] lg:col-span-6">

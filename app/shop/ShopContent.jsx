@@ -18,7 +18,7 @@ export default function ShopContent({ products, slides }) {
         <HeroSlideshow
           slides={slides}
           title="All clothing"
-          subtitle={`${products.length} pieces, sent from Kerala`}
+          subtitle={products.length ? `${products.length} ${products.length === 1 ? 'piece' : 'pieces'}, sent from Kerala` : 'New pieces are on their way'}
           label="MacDame collections"
           compact
         />

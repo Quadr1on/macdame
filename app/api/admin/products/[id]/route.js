@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { requireAdminApi } from '@/lib/admin-auth'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { normalizeProductPayload, normalizeVariants } from '@/lib/admin-products'
+import { revalidateStorefront } from '@/lib/revalidate-storefront'
 
 // Flags the products table can toggle on their own, without re-submitting the
 // whole form — used by the row switches on /admin/products.
@@ -34,6 +35,7 @@ export async function PATCH(request, { params }) {
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     if (!data) return NextResponse.json({ error: 'Product not found' }, { status: 404 })
+    revalidateStorefront()
     return NextResponse.json({ product: data })
   }
 
@@ -108,6 +110,7 @@ export async function PATCH(request, { params }) {
     }
   }
 
+  revalidateStorefront()
   return NextResponse.json({ product })
 }
 
@@ -143,5 +146,6 @@ export async function DELETE(_request, { params }) {
   const { error } = await admin.from('products').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
+  revalidateStorefront()
   return NextResponse.json({ ok: true })
 }

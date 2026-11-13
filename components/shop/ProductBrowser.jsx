@@ -111,17 +111,25 @@ export default function ProductBrowser({ products = [], activeSlug = null, headi
           ) : (
             <div className="mt-8 flex flex-col items-start gap-4 border border-dashed border-[var(--line)] p-10">
               <h3 className="font-display t-h3 text-[var(--ink)]">
-                {products.length ? 'No pieces in that price range' : 'Pieces for this collection are on their way'}
+                {products.length
+                  ? 'No pieces in that price range'
+                  : activeSlug
+                    ? 'Pieces for this collection are on their way'
+                    : 'New pieces are on their way'}
               </h3>
               <p className="text-[var(--muted)] measure">
                 {products.length
                   ? 'Widen the price range to see the rest of the collection.'
-                  : 'Nothing is listed here yet. The rest of the shop is open in the meantime.'}
+                  : activeSlug
+                    ? 'Nothing is listed here yet. The rest of the shop is open in the meantime.'
+                    : 'The shop is being restocked. Follow us on Instagram to see new pieces first.'}
               </p>
               {products.length ? (
                 <button type="button" onClick={clear} className="btn btn-primary">Show every price</button>
-              ) : (
+              ) : activeSlug ? (
                 <Link href="/shop" className="btn btn-primary">Shop all clothing</Link>
+              ) : (
+                <a href="https://www.instagram.com/mac_dame/" target="_blank" rel="noopener noreferrer" className="btn btn-primary">Follow on Instagram</a>
               )}
             </div>
           )}

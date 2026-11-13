@@ -29,7 +29,10 @@ gsap.registerPlugin(useGSAP)
 
 const INTERVAL = 6.5
 
-export default function HeroSlideshow({ slides: SLIDES = HOME_SLIDES, title, subtitle, label = 'MacDame collections', compact = false }) {
+export default function HeroSlideshow({ slides, title, subtitle, label = 'MacDame collections', compact = false }) {
+  // An empty list (say, a catalogue with no products yet) falls back to the
+  // first home slide instead of crashing on slides[0].
+  const SLIDES = slides?.length ? slides : HOME_SLIDES.slice(0, slides ? 1 : HOME_SLIDES.length)
   const multi = SLIDES.length > 1
   const root = useRef(null)
   const slideRefs = useRef([])

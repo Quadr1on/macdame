@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { requireAdminApi } from '@/lib/admin-auth'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { normalizeCategory } from '@/lib/admin-categories'
+import { revalidateStorefront } from '@/lib/revalidate-storefront'
 
 export async function PATCH(request, { params }) {
   const guard = await requireAdminApi()
@@ -29,5 +30,6 @@ export async function PATCH(request, { params }) {
   }
   if (!data) return NextResponse.json({ error: 'Collection not found' }, { status: 404 })
 
+  revalidateStorefront()
   return NextResponse.json({ category: data })
 }

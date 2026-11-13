@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { requireAdminApi } from '@/lib/admin-auth'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { normalizeCategory } from '@/lib/admin-categories'
+import { revalidateStorefront } from '@/lib/revalidate-storefront'
 
 export async function POST(request) {
   const guard = await requireAdminApi()
@@ -22,5 +23,6 @@ export async function POST(request) {
     return NextResponse.json({ error: message }, { status: 400 })
   }
 
+  revalidateStorefront()
   return NextResponse.json({ category: data })
 }

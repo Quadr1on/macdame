@@ -114,7 +114,7 @@ export default function OrderHistory({ orderId, placedAt, events, eventsError, c
           <TimelineItem
             key={event.id}
             event={event}
-            mine={event.kind === 'note' && currentEmail && event.actor_email === currentEmail}
+            mine={Boolean(currentEmail) && event.actor_email === currentEmail}
             deleting={deleting === event.id}
             onDelete={() => removeNote(event.id)}
           />
@@ -204,7 +204,7 @@ function TimelineItem({ event, mine, deleting, onDelete, last }) {
             </>
           )}
           {when}
-          {mine && (
+          {mine && event.kind === 'note' && (
             <button
               type="button"
               onClick={onDelete}

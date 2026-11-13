@@ -37,6 +37,17 @@ export async function PATCH(request, { params }) {
   // Service role: orders has a SELECT-only RLS policy and no UPDATE policy, so
   // the cookie-scoped anon client cannot write here.
   const admin = createAdminClient()
+
+  // Read the current values first so the history can say what changed from.
+  const { data: before, error: readError } = await admin
+    .from('orders')
+    .select('order_status, tracking_number')
+    .eq('id', id)
+    .maybeSingle()
+
+  if (readError) return NextResponse.json({ error: readError.message }, { status: 500 })
+  if (!before) return NextResponse.json({ error: 'Order not found' }, { status: 404 })
+
   const { data, error } = await admin
     .from('orders')
     .update(updates)
@@ -47,5 +58,37 @@ export async function PATCH(request, { params }) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   if (!data) return NextResponse.json({ error: 'Order not found' }, { status: 404 })
 
-  return NextResponse.json({ order: data })
+  const actor = guard.user.email ?? null
+  const events = []
+  if ('order_status' in updates && updates.order_status !== before.order_status) {
+    events.push({
+      order_id: id,
+      kind: 'status',
+      from_value: before.order_status,
+      to_value: updates.order_status,
+      actor_email: actor,
+    })
+  }
+  if ('tracking_number' in updates && updates.tracking_number !== before.tracking_number) {
+    events.push({
+      order_id: id,
+      kind: 'tracking',
+      from_value: before.tracking_number,
+      to_value: updates.tracking_number,
+      actor_email: actor,
+    })
+  }
+
+  // The order itself is already saved; a failed history write must not turn
+  // that into an error the admin would retry. Report it alongside instead.
+  let historyError = null
+  if (events.length > 0) {
+    const { error: eventsError } = await admin.from('order_events').insert(events)
+    if (eventsError) {
+      console.error('order_events insert failed', eventsError)
+      historyError = 'Saved, but the change could not be added to the order history.'
+    }
+  }
+
+  return NextResponse.json({ order: data, historyError })
 }

@@ -48,7 +48,9 @@ export default function OrderActions({ order }) {
         setError(payload.error ?? 'Could not update the order. Try again.')
         return
       }
-      setNotice('Saved')
+      // The order saved even if its history entry didn't; say so rather than fail.
+      if (payload.historyError) setError(payload.historyError)
+      else setNotice('Saved')
       setConfirmingCancel(false)
       // Re-render the server component so badges and buttons reflect the change.
       router.refresh()

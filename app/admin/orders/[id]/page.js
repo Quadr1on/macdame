@@ -21,7 +21,9 @@ import {
   formatVariantDetails,
 } from '@/lib/order-status'
 import { formatAddress, formatAge, phoneDigits } from '@/lib/admin-orders'
+import { getAdminUser } from '@/lib/admin-auth'
 import OrderActions from './OrderActions'
+import OrderHistory from './OrderHistory'
 
 const PAYMENT_METHOD_LABELS = { razorpay: 'Razorpay', cod: 'Cash on delivery' }
 
@@ -49,7 +51,7 @@ export default async function AdminOrderDetailPage({ params }) {
   if (error && error.code !== '22P02') throw new Error(`Could not load order: ${error.message}`)
   if (!order) notFound()
 
-  const [authResult, newerResult, olderResult] = await Promise.all([
+  const [authResult, newerResult, olderResult, eventsResult, adminUser] = await Promise.all([
     // users_profile has no email column — it only lives on auth.users, which
     // the service role can reach through the admin auth API. user_id is
     // nulled if the account is deleted.
@@ -68,6 +70,14 @@ export default async function AdminOrderDetailPage({ params }) {
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle(),
+    admin
+      .from('order_events')
+      .select('id, kind, from_value, to_value, note, actor_email, created_at')
+      .eq('order_id', order.id)
+      .order('created_at', { ascending: false }),
+    // Already resolved once by the admin layout; needed here to mark which
+    // notes the viewer wrote (and so may delete).
+    getAdminUser(),
   ])
 
   const email = authResult.data?.user?.email ?? null
@@ -272,6 +282,16 @@ export default async function AdminOrderDetailPage({ params }) {
               </div>
             </Panel>
           </div>
+
+          <Panel title="History and notes" description="Changes made in the admin, and notes only the team can see">
+            <OrderHistory
+              orderId={order.id}
+              placedAt={order.created_at}
+              events={eventsResult.data ?? []}
+              eventsError={eventsResult.error?.message ?? null}
+              currentEmail={adminUser.user?.email ?? null}
+            />
+          </Panel>
         </div>
       </div>
     </>

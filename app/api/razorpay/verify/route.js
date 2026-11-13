@@ -23,7 +23,7 @@ export async function POST(request) {
 
   const { data: order, error: orderError } = await admin
     .from('orders')
-    .select('id, order_number, user_id')
+    .select('id, order_number, user_id, payment_status')
     .eq('razorpay_order_id', razorpay_order_id)
     .single()
 
@@ -36,11 +36,25 @@ export async function POST(request) {
     .update(`${razorpay_order_id}|${razorpay_payment_id}`)
     .digest('hex')
 
-  const isValid = expectedSignature === razorpay_signature
+  // Constant-time compare; lengths must match first or timingSafeEqual throws.
+  const given = Buffer.from(String(razorpay_signature))
+  const expected = Buffer.from(expectedSignature)
+  const isValid = given.length === expected.length && crypto.timingSafeEqual(given, expected)
 
   if (!isValid) {
-    await admin.from('orders').update({ payment_status: 'failed' }).eq('id', order.id)
+    // Only a still-pending order may be marked failed, so a bad signature
+    // replayed against an order that is already paid cannot undo the payment.
+    await admin
+      .from('orders')
+      .update({ payment_status: 'failed' })
+      .eq('id', order.id)
+      .eq('payment_status', 'pending')
     return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 })
+  }
+
+  // A repeat of a verification that already succeeded is not an error.
+  if (order.payment_status === 'paid') {
+    return NextResponse.json({ success: true, orderNumber: order.order_number })
   }
 
   await admin

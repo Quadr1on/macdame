@@ -88,7 +88,7 @@ export default function MembersTab({ roles, members, owners, actor, viewerEmail 
         ) : (
           <form onSubmit={add} className="space-y-4 p-4">
             <div className="space-y-1.5">
-              <label htmlFor="member_email" className="text-sm font-medium text-slate-900">
+              <label htmlFor="member_email" className="block text-sm font-medium text-slate-900">
                 Email
               </label>
               <input

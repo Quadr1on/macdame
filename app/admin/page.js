@@ -143,7 +143,7 @@ async function DashboardContent() {
         <StatTile
           label="Revenue · 30 days"
           value={ordersError ? dash : formatCurrency(month.revenue)}
-          hint={ordersError ? 'Unavailable' : <ChangeHint current={month.revenue} previous={month.previousRevenue} period="previous 30 days" />}
+          hint={ordersError ? 'Unavailable' : <ChangeHint current={month.revenue} previous={month.previousRevenue} period="the previous 30 days" />}
         />
         <StatTile
           label="Orders · 30 days"
@@ -177,8 +177,8 @@ async function DashboardContent() {
               <div className="p-4 space-y-5">
                 <dl className="grid grid-cols-3 gap-3 sm:gap-6">
                   <RevenueFigure label="Today" window={today} period="yesterday" />
-                  <RevenueFigure label="Last 7 days" window={week} period="previous 7 days" />
-                  <RevenueFigure label="Last 30 days" window={month} period="previous 30 days" />
+                  <RevenueFigure label="Last 7 days" window={week} period="the previous 7 days" />
+                  <RevenueFigure label="Last 30 days" window={month} period="the previous 30 days" />
                 </dl>
                 <RevenueChart days={chartDays} />
                 <p className="text-xs text-slate-500">
@@ -468,12 +468,14 @@ function variantLabel(variant) {
 }
 
 function ChangeHint({ current, previous, period }) {
+  // `period` is "yesterday" or "the previous N days"; only the latter takes "in".
+  const during = period === 'yesterday' ? period : `in ${period}`
   const change = percentChange(current, previous)
   if (change === null) {
-    return current > 0 ? `No sales in the ${period}` : `Nothing in the ${period} either`
+    return current > 0 ? `No sales ${during}` : `No sales ${during} either`
   }
   const rounded = Math.round(change)
-  if (rounded === 0) return `Level with the ${period}`
+  if (rounded === 0) return `Level with ${period}`
   const up = rounded > 0
   return (
     <span>

@@ -5,7 +5,7 @@ import { normalizeProductPayload, normalizeVariants } from '@/lib/admin-products
 import { revalidateStorefront } from '@/lib/revalidate-storefront'
 
 export async function POST(request) {
-  const guard = await requireAdminApi()
+  const guard = await requireAdminApi('products.edit')
   if (guard.response) return guard.response
 
   const body = await request.json().catch(() => ({}))

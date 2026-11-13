@@ -1,8 +1,13 @@
 import { createAdminClient } from '@/lib/supabase/admin'
-import { PageHeader } from '@/components/admin/ui'
+import { getAdminUser } from '@/lib/admin-auth'
+import { can } from '@/lib/admin-permissions'
+import { PageHeader, NoAccess } from '@/components/admin/ui'
 import CategoriesManager from './CategoriesManager'
 
 export default async function AdminCollectionsPage() {
+  const { access } = await getAdminUser()
+  if (!can(access, 'collections.manage')) return <NoAccess what="collections" />
+
   const admin = createAdminClient()
 
   // products(count) rides the FK to return the product tally per category in a

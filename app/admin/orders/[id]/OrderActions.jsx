@@ -19,7 +19,7 @@ import { nextOrderStep } from '@/lib/admin-orders'
 // Fulfilment controls for one order. The forward path is a single button for
 // the next step, so the everyday flow can't accidentally jump backwards;
 // cancelling and correcting a mistake are kept apart from it.
-export default function OrderActions({ order }) {
+export default function OrderActions({ order, canUpdate = true, canCancel = true }) {
   const router = useRouter()
   const status = order.order_status
   const step = nextOrderStep(status)
@@ -96,7 +96,7 @@ export default function OrderActions({ order }) {
         </p>
       )}
 
-      {step && (
+      {step && canUpdate && (
         <div className="space-y-3">
           {status === 'pending' && !paid && !cod && (
             <p className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
@@ -137,7 +137,7 @@ export default function OrderActions({ order }) {
         </div>
       )}
 
-      {showTracking && !step?.needsTracking && (
+      {showTracking && canUpdate && !step?.needsTracking && (
         <form
           className="space-y-1.5"
           onSubmit={(event) => {
@@ -172,7 +172,7 @@ export default function OrderActions({ order }) {
         </p>
       )}
 
-      {!['delivered', 'cancelled'].includes(status) && (
+      {canCancel && !['delivered', 'cancelled'].includes(status) && (
         <div className="border-t border-slate-100 pt-4">
           {confirmingCancel ? (
             <div className="space-y-3 rounded-md border border-rose-200 bg-rose-50 p-3">
@@ -210,6 +210,7 @@ export default function OrderActions({ order }) {
       )}
 
       {/* Escape hatch for mistakes, e.g. marked delivered too early. */}
+      {canUpdate && (
       <details className="group border-t border-slate-100 pt-4">
         <summary className="cursor-pointer text-xs font-medium text-slate-500 hover:text-slate-900 rounded outline-none focus-visible:ring-2 focus-visible:ring-slate-300">
           Correct the status manually
@@ -243,6 +244,11 @@ export default function OrderActions({ order }) {
           <p className="text-xs text-slate-500">Use this only to fix a mistake. The customer sees the new status.</p>
         </div>
       </details>
+      )}
+
+      {!canUpdate && !canCancel && (
+        <p className="text-xs text-slate-500">Your role can view this order but not change it.</p>
+      )}
     </div>
   )
 }

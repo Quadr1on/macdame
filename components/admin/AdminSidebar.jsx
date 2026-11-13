@@ -8,20 +8,24 @@ import {
   Package,
   FolderTree,
   Users,
+  ShieldCheck,
   ArrowLeft,
   Menu,
   X,
 } from 'lucide-react'
 
+// `permission` mirrors ADMIN_SECTIONS in lib/admin-permissions.js. Hiding a
+// link is only a convenience: each page checks the permission on the server.
 const links = [
-  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Orders', href: '/admin/orders', icon: ShoppingBag },
-  { name: 'Products', href: '/admin/products', icon: Package },
-  { name: 'Collections', href: '/admin/collections', icon: FolderTree },
-  { name: 'Customers', href: '/admin/customers', icon: Users },
+  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard, permission: 'dashboard.view' },
+  { name: 'Orders', href: '/admin/orders', icon: ShoppingBag, permission: 'orders.view' },
+  { name: 'Products', href: '/admin/products', icon: Package, permission: 'products.view' },
+  { name: 'Collections', href: '/admin/collections', icon: FolderTree, permission: 'collections.manage' },
+  { name: 'Customers', href: '/admin/customers', icon: Users, permission: 'customers.view' },
+  { name: 'Access', href: '/admin/access', icon: ShieldCheck, permission: 'access.manage' },
 ]
 
-export default function AdminSidebar({ email }) {
+export default function AdminSidebar({ email, permissions = [], roleLabel }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
 
@@ -30,7 +34,7 @@ export default function AdminSidebar({ email }) {
 
   const nav = (
     <nav className="space-y-1">
-      {links.map(({ name, href, icon: Icon }) => (
+      {links.filter((link) => permissions.includes(link.permission)).map(({ name, href, icon: Icon }) => (
         <Link
           key={href}
           href={href}
@@ -83,6 +87,7 @@ export default function AdminSidebar({ email }) {
         <div className="px-3 mb-6">
           <p className="font-semibold text-slate-900">Macdame Admin</p>
           <p className="text-xs text-slate-500 truncate mt-0.5">{email}</p>
+          {roleLabel && <p className="text-xs font-medium text-slate-400 truncate mt-0.5">{roleLabel}</p>}
         </div>
 
         {nav}

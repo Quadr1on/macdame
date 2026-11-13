@@ -5,7 +5,7 @@ import { normalizeCategory } from '@/lib/admin-categories'
 import { revalidateStorefront } from '@/lib/revalidate-storefront'
 
 export async function PATCH(request, { params }) {
-  const guard = await requireAdminApi()
+  const guard = await requireAdminApi('collections.manage')
   if (guard.response) return guard.response
 
   const { id } = await params

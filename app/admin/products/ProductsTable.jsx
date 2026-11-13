@@ -61,7 +61,7 @@ function ActiveToggle({ productId, active, onError }) {
   )
 }
 
-export default function ProductsTable({ products }) {
+export default function ProductsTable({ products, canEdit = true }) {
   const [error, setError] = useState('')
 
   if (products.length === 0) {
@@ -122,11 +122,17 @@ export default function ProductsTable({ products }) {
                   {stock}
                 </TableCell>
                 <TableCell className="px-4 text-right">
-                  <ActiveToggle
-                    productId={product.id}
-                    active={product.is_active}
-                    onError={setError}
-                  />
+                  {canEdit ? (
+                    <ActiveToggle
+                      productId={product.id}
+                      active={product.is_active}
+                      onError={setError}
+                    />
+                  ) : (
+                    // View-only roles see the state without a switch they
+                    // could not use (the API would refuse it anyway).
+                    <span className="text-xs text-slate-500">{product.is_active ? 'Live' : 'Hidden'}</span>
+                  )}
                 </TableCell>
               </TableRow>
             )

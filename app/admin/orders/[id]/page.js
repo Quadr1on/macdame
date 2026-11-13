@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { OrderStatusBadge, PaymentStatusBadge } from '@/components/StatusBadge'
-import { PageHeader, Panel, FieldRow } from '@/components/admin/ui'
+import { PageHeader, Panel, FieldRow, NoAccess } from '@/components/admin/ui'
 import CopyButton from '@/components/admin/CopyButton'
 import {
   formatCurrency,
@@ -22,12 +22,16 @@ import {
 } from '@/lib/order-status'
 import { formatAddress, formatAge, phoneDigits } from '@/lib/admin-orders'
 import { getAdminUser } from '@/lib/admin-auth'
+import { can } from '@/lib/admin-permissions'
 import OrderActions from './OrderActions'
 import OrderHistory from './OrderHistory'
 
 const PAYMENT_METHOD_LABELS = { razorpay: 'Razorpay', cod: 'Cash on delivery' }
 
 export default async function AdminOrderDetailPage({ params }) {
+  const { access } = await getAdminUser()
+  if (!can(access, 'orders.view')) return <NoAccess what="orders" />
+
   const { id } = await params
   const admin = createAdminClient()
 
@@ -117,7 +121,12 @@ export default async function AdminOrderDetailPage({ params }) {
         {/* On phones the actions come first: they are why the page was opened. */}
         <div className="space-y-4 lg:order-2">
           <Panel title="Fulfilment" description="What the customer sees on their order page">
-            <OrderActions key={order.order_status} order={order} />
+            <OrderActions
+              key={order.order_status}
+              order={order}
+              canUpdate={can(access, 'orders.update')}
+              canCancel={can(access, 'orders.cancel')}
+            />
           </Panel>
 
           <Panel title="Payment">
@@ -290,6 +299,7 @@ export default async function AdminOrderDetailPage({ params }) {
               events={eventsResult.data ?? []}
               eventsError={eventsResult.error?.message ?? null}
               currentEmail={adminUser.user?.email ?? null}
+              canNote={can(access, 'orders.notes')}
             />
           </Panel>
         </div>

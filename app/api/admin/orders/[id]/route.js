@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { requireAdminApi } from '@/lib/admin-auth'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { isValidOrderStatus } from '@/lib/order-status'
+import { can } from '@/lib/admin-permissions'
 
 export async function PATCH(request, { params }) {
   const guard = await requireAdminApi()
@@ -32,6 +33,17 @@ export async function PATCH(request, { params }) {
 
   if (Object.keys(updates).length === 1) {
     return NextResponse.json({ error: 'Nothing to update' }, { status: 400 })
+  }
+
+  // Cancelling is its own permission so a role can move orders along without
+  // being able to cancel them, or the reverse. Any other change needs update.
+  const cancelling = updates.order_status === 'cancelled'
+  const otherChange = 'tracking_number' in updates || ('order_status' in updates && !cancelling)
+  if ((cancelling && !can(guard.access, 'orders.cancel')) || (otherChange && !can(guard.access, 'orders.update'))) {
+    return NextResponse.json(
+      { error: 'Your role does not allow this change. Ask an owner for access.' },
+      { status: 403 }
+    )
   }
 
   // Service role: orders has a SELECT-only RLS policy and no UPDATE policy, so

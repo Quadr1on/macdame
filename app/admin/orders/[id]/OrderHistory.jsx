@@ -9,7 +9,7 @@ import { NOTE_MAX_LENGTH, formatAge } from '@/lib/admin-orders'
 
 // Private notes plus a timeline of what the team did to this order, newest
 // first. "Order placed" is derived from the order's own timestamp.
-export default function OrderHistory({ orderId, placedAt, events, eventsError, currentEmail }) {
+export default function OrderHistory({ orderId, placedAt, events, eventsError, currentEmail, canNote = true }) {
   const router = useRouter()
   const [note, setNote] = useState('')
   const [saving, setSaving] = useState(false)
@@ -65,6 +65,7 @@ export default function OrderHistory({ orderId, placedAt, events, eventsError, c
 
   return (
     <div>
+      {canNote && (
       <form onSubmit={addNote} className="space-y-2 border-b border-slate-200 p-4">
         <label htmlFor="order_note" className="sr-only">
           Add a private note
@@ -102,6 +103,10 @@ export default function OrderHistory({ orderId, placedAt, events, eventsError, c
           </p>
         )}
       </form>
+      )}
+      {!canNote && error && (
+        <p role="alert" className="mx-4 mt-4 rounded-md border border-red-200 bg-red-50 p-2.5 text-xs text-red-700">{error}</p>
+      )}
 
       {eventsError && (
         <p role="alert" className="px-4 pt-4 text-sm text-red-700">
@@ -115,6 +120,7 @@ export default function OrderHistory({ orderId, placedAt, events, eventsError, c
             key={event.id}
             event={event}
             mine={Boolean(currentEmail) && event.actor_email === currentEmail}
+            canDelete={canNote}
             deleting={deleting === event.id}
             onDelete={() => removeNote(event.id)}
           />
@@ -170,7 +176,7 @@ function describe(event) {
   }
 }
 
-function TimelineItem({ event, mine, deleting, onDelete, last }) {
+function TimelineItem({ event, mine, canDelete, deleting, onDelete, last }) {
   const Icon = ICONS[event.kind] ?? StickyNote
   const when = (
     <time suppressHydrationWarning dateTime={event.created_at} title={formatOrderDate(event.created_at, { withTime: true })}>
@@ -204,7 +210,7 @@ function TimelineItem({ event, mine, deleting, onDelete, last }) {
             </>
           )}
           {when}
-          {mine && event.kind === 'note' && (
+          {mine && canDelete && event.kind === 'note' && (
             <button
               type="button"
               onClick={onDelete}

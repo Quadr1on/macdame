@@ -5,7 +5,7 @@ import { normalizeCategory } from '@/lib/admin-categories'
 import { revalidateStorefront } from '@/lib/revalidate-storefront'
 
 export async function POST(request) {
-  const guard = await requireAdminApi()
+  const guard = await requireAdminApi('collections.manage')
   if (guard.response) return guard.response
 
   const body = await request.json().catch(() => ({}))

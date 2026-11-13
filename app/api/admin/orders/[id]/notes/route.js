@@ -6,7 +6,7 @@ import { NOTE_MAX_LENGTH } from '@/lib/admin-orders'
 // Private team notes on an order. Stored as order_events rows of kind 'note',
 // which have no RLS policies, so customers can never read them.
 export async function POST(request, { params }) {
-  const guard = await requireAdminApi()
+  const guard = await requireAdminApi('orders.notes')
   if (guard.response) return guard.response
 
   const { id } = await params
@@ -42,7 +42,7 @@ export async function POST(request, { params }) {
 // An admin can remove a note they wrote themselves, e.g. a typo or a note
 // added to the wrong order. Status and tracking history can't be deleted.
 export async function DELETE(request, { params }) {
-  const guard = await requireAdminApi()
+  const guard = await requireAdminApi('orders.notes')
   if (guard.response) return guard.response
 
   const { id } = await params

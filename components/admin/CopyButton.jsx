@@ -2,7 +2,8 @@
 import { useState } from 'react'
 import { Check, Copy } from 'lucide-react'
 
-// Copies `text` to the clipboard and briefly confirms. Falls back to a plain
+// Copies `text` (a string, or a function returning one, read at click time
+// so it can use browser-only values like window.location) to the clipboard and briefly confirms. Falls back to a plain
 // "Couldn't copy" message where the Clipboard API is unavailable (non-HTTPS
 // origins other than localhost, some in-app browsers).
 export default function CopyButton({ text, label = 'Copy' }) {
@@ -10,7 +11,7 @@ export default function CopyButton({ text, label = 'Copy' }) {
 
   async function copy() {
     try {
-      await navigator.clipboard.writeText(text)
+      await navigator.clipboard.writeText(typeof text === 'function' ? text() : text)
       setState('copied')
     } catch {
       setState('failed')

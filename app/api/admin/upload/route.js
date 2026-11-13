@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { requireAdminApi } from '@/lib/admin-auth'
+import { can } from '@/lib/admin-permissions'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 const BUCKET = 'product-images'
@@ -20,10 +21,14 @@ const EXTENSIONS = {
 // Uploads run server-side rather than straight from the browser: a direct
 // upload would need a storage RLS policy granting `authenticated` inserts,
 // which every signed-in customer would satisfy. Going through here keeps the
-// ADMIN_EMAILS allowlist as the only way to write to the bucket.
+// admin permission check as the only way to write to the bucket.
 export async function POST(request) {
   const guard = await requireAdminApi()
   if (guard.response) return guard.response
+  // Photos are uploaded from the product form and the collections manager.
+  if (!can(guard.access, 'products.edit') && !can(guard.access, 'collections.manage')) {
+    return NextResponse.json({ error: 'Your role does not allow uploading images.' }, { status: 403 })
+  }
 
   let formData
   try {

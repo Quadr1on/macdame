@@ -2,10 +2,15 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, ExternalLink } from 'lucide-react'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { PageHeader } from '@/components/admin/ui'
+import { getAdminUser } from '@/lib/admin-auth'
+import { can } from '@/lib/admin-permissions'
+import { PageHeader, NoAccess } from '@/components/admin/ui'
 import ProductForm from '@/components/admin/ProductForm'
 
 export default async function EditProductPage({ params }) {
+  const { access } = await getAdminUser()
+  if (!can(access, 'products.edit')) return <NoAccess what="editing products" />
+
   const { id } = await params
   const admin = createAdminClient()
 
@@ -37,7 +42,7 @@ export default async function EditProductPage({ params }) {
         </Link>
       </PageHeader>
 
-      <ProductForm categories={categories ?? []} product={product} />
+      <ProductForm categories={categories ?? []} product={product} canDelete={can(access, 'products.delete')} />
     </>
   )
 }

@@ -1,8 +1,10 @@
 import Link from 'next/link'
 import { Search, X, ChevronRight, Clock } from 'lucide-react'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getAdminUser } from '@/lib/admin-auth'
+import { can } from '@/lib/admin-permissions'
 import { OrderStatusBadge, PaymentStatusBadge } from '@/components/StatusBadge'
-import { PageHeader, Panel, EmptyState } from '@/components/admin/ui'
+import { PageHeader, Panel, EmptyState, NoAccess } from '@/components/admin/ui'
 import {
   Table,
   TableBody,
@@ -50,6 +52,9 @@ async function matchingCustomerIds(admin, term) {
 }
 
 export default async function AdminOrdersPage({ searchParams }) {
+  const { access } = await getAdminUser()
+  if (!can(access, 'orders.view')) return <NoAccess what="orders" />
+
   const params = await searchParams
   const view = findOrderView(params?.view)
   const status = ORDER_STATUSES.includes(params?.status) ? params.status : null

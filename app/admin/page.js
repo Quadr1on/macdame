@@ -1,9 +1,12 @@
 import { Suspense } from 'react'
+import { redirect } from 'next/navigation'
+import { getAdminUser } from '@/lib/admin-auth'
+import { can, firstAllowedSection } from '@/lib/admin-permissions'
 import Link from 'next/link'
 import { AlertCircle, ArrowRight, PackageX, PackageMinus, EyeOff } from 'lucide-react'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { OrderStatusBadge, PaymentStatusBadge } from '@/components/StatusBadge'
-import { PageHeader, Panel, StatTile, EmptyState } from '@/components/admin/ui'
+import { PageHeader, Panel, StatTile, EmptyState, NoAccess } from '@/components/admin/ui'
 import RevenueChart from '@/components/admin/RevenueChart'
 import DashboardSkeleton from '@/components/admin/DashboardSkeleton'
 import {
@@ -36,7 +39,16 @@ const DAY_MS = 24 * 60 * 60 * 1000
 
 // The header paints straight away; the data-heavy body streams in behind a
 // skeleton so the admin never stares at a blank page while Supabase answers.
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  // /admin is where everyone lands after sign-in; send people without the
+  // dashboard to the first section they can use instead of a dead end.
+  const { access } = await getAdminUser()
+  if (!can(access, 'dashboard.view')) {
+    const section = firstAllowedSection(access.permissions)
+    if (section && section.href !== '/admin') redirect(section.href)
+    return <NoAccess what="the dashboard" />
+  }
+
   return (
     <>
       <PageHeader title="Dashboard" description="Everything happening in the shop right now" />

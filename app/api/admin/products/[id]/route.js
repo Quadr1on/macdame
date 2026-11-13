@@ -9,7 +9,7 @@ import { revalidateStorefront } from '@/lib/revalidate-storefront'
 const TOGGLE_FIELDS = ['is_active', 'is_new', 'is_bestseller']
 
 export async function PATCH(request, { params }) {
-  const guard = await requireAdminApi()
+  const guard = await requireAdminApi('products.edit')
   if (guard.response) return guard.response
 
   const { id } = await params
@@ -115,7 +115,7 @@ export async function PATCH(request, { params }) {
 }
 
 export async function DELETE(_request, { params }) {
-  const guard = await requireAdminApi()
+  const guard = await requireAdminApi('products.delete')
   if (guard.response) return guard.response
 
   const { id } = await params

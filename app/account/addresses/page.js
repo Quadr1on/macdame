@@ -151,8 +151,7 @@ export default function AddressesPage() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1
-                className="text-3xl md:text-4xl font-bold text-[var(--color-primary-dark)]"
-                style={{ fontFamily: 'Georgia, serif' }}
+                className="font-display text-3xl md:text-4xl font-bold text-[var(--color-primary-dark)]"
               >
                 Saved Addresses
               </h1>
@@ -177,7 +176,7 @@ export default function AddressesPage() {
               <div className="w-20 h-20 rounded-full bg-[var(--color-cream-dark)] flex items-center justify-center mb-6">
                 <MapPin className="w-8 h-8 text-[var(--color-primary)]/40" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
+              <h2 className="font-display text-xl font-bold text-gray-900 mb-2">
                 No addresses yet
               </h2>
               <p className="text-gray-500 mb-6 max-w-sm">

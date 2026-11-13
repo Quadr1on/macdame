@@ -1,7 +1,6 @@
-'use client'
-import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
+import Arrow from './home/Arrow'
 
 /**
  * Bento sizing for an arbitrary number of collections.
@@ -27,147 +26,64 @@ function gridClassFor(index, total) {
   return 'md:col-span-1 md:row-span-1'
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
-    },
-  },
-}
+const pieces = (n) => `${n} ${n === 1 ? 'piece' : 'pieces'}`
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      type: 'spring',
-      stiffness: 100,
-      damping: 15,
-    },
-  },
-}
-
+/**
+ * The range: every collection from the database as a photograph tile. The
+ * name sits on an opaque cream plate inside the tile rather than on a gradient
+ * scrim, so it stays readable over any photograph.
+ */
 export default function Collections({ collections = [] }) {
   if (collections.length === 0) return null
 
   return (
-    <section className="py-20 bg-gradient-to-b from-[var(--color-cream)] to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <span className="text-sm font-semibold text-[var(--color-secondary)] tracking-wider uppercase">
-            Shop by Category
-          </span>
-          <h2 className="mt-2 text-3xl md:text-4xl font-bold text-gray-900">
-            Our Collections
+    <section id="collections" className="screen" style={{ '--h': 1 }} aria-labelledby="collections-h">
+      <div className="page-wrap flex flex-1 flex-col">
+        <div className="mb-8 lg:mb-10 grid gap-3 lg:grid-cols-12 lg:gap-x-6 lg:items-end">
+          <h2 id="collections-h" className="font-display t-h2 text-[var(--ink)] lg:col-span-6">
+            Collections for women, men and children
           </h2>
-          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            Explore our carefully curated collections of authentic South Indian traditional wear
+          <p className="text-[var(--muted)] lg:col-start-7 lg:col-span-5">
+            Kasavu for festivals and weddings, everyday mundus, and uniforms for schools.
           </p>
-        </motion.div>
+        </div>
 
-        {/* Bento Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 auto-rows-[200px] md:auto-rows-[220px]"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 auto-rows-[220px] md:auto-rows-[180px] md:flex-1">
           {collections.map((collection, index) => {
-            const gridClass = gridClassFor(index, collections.length)
             const isFeature = index === 0
-            // Only the roomy tiles get body copy — a single cell can't hold it.
-            const showDescription = isFeature || gridClass.includes('col-span-2') || gridClass.includes('col-span-3')
-
             return (
-              <motion.div key={collection.slug} variants={itemVariants} className={`${gridClass} group`}>
-                <Link
-                  href={collection.href}
-                  className="relative block w-full h-full rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 bg-[var(--color-cream-dark)]"
-                >
-                  {/* Background Image */}
-                  {collection.image && (
-                    <Image
-                      src={collection.image}
-                      alt={collection.name}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                    />
-                  )}
+              <Link
+                key={collection.slug}
+                href={collection.href}
+                className={`${gridClassFor(index, collections.length)} group relative block overflow-hidden rounded-none bg-[var(--color-cream-dark)]`}
+              >
+                {collection.image && (
+                  <Image
+                    src={collection.image}
+                    alt=""
+                    fill
+                    className="object-cover photo-zoom"
+                    sizes={isFeature ? '(max-width: 768px) 100vw, 66vw' : '(max-width: 768px) 100vw, 33vw'}
+                  />
+                )}
 
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
-
-                  {/* Content */}
-                  <div className="absolute inset-0 p-5 md:p-6 flex flex-col justify-end">
-                    {/* Item Count Badge */}
-                    {collection.itemCount > 0 && (
-                      <motion.span
-                        initial={{ opacity: 0, x: -10 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.3 + index * 0.1 }}
-                        className="inline-block w-fit px-3 py-1 bg-[var(--color-secondary)] text-white text-xs font-semibold rounded-full mb-2 md:mb-3"
-                      >
-                        {collection.itemCount} {collection.itemCount === 1 ? 'Item' : 'Items'}
-                      </motion.span>
-                    )}
-
-                    {/* Title */}
-                    <h3
-                      className={`font-bold text-white leading-tight mb-1 md:mb-2 ${
-                        isFeature ? 'text-2xl md:text-3xl' : 'text-lg md:text-xl'
-                      }`}
-                      style={{ fontFamily: 'Georgia, serif' }}
-                    >
+                <div className="absolute left-3 bottom-3 right-3 sm:right-auto flex items-center gap-6 bg-[var(--color-cream)] px-4 py-3 text-[var(--ink)]">
+                  <div>
+                    <h3 className={`font-display leading-tight ${isFeature ? 't-h3' : 'text-xl'}`}>
                       {collection.name}
                     </h3>
-
-                    {showDescription && collection.description && (
-                      <p className="text-white/80 text-sm md:text-base mb-3 line-clamp-2">
-                        {collection.description}
-                      </p>
+                    {collection.itemCount > 0 && (
+                      <p className="text-sm text-[var(--muted)]">{pieces(collection.itemCount)}</p>
                     )}
-
-                    {/* Explore Link */}
-                    <div className="flex items-center gap-2 text-white font-medium text-sm group-hover:gap-3 transition-all duration-300">
-                      <span>Explore Collection</span>
-                      <svg
-                        className="w-4 h-4 group-hover:translate-x-1 transition-transform"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 8l4 4m0 0l-4 4m4-4H3"
-                        />
-                      </svg>
-                    </div>
                   </div>
-
-                  {/* Hover Glow Effect */}
-                  <div className="absolute inset-0 bg-[var(--color-secondary)]/0 group-hover:bg-[var(--color-secondary)]/10 transition-colors duration-300 pointer-events-none" />
-                </Link>
-              </motion.div>
+                  <span className="ml-auto sm:ml-0 grid size-9 place-items-center rounded-full border border-[var(--line)] transition-[background-color,border-color,color] duration-200 group-hover:border-[var(--ink)] group-hover:bg-[var(--ink)] group-hover:text-[var(--color-cream)]">
+                    <Arrow className="size-3.5" />
+                  </span>
+                </div>
+              </Link>
             )
           })}
-        </motion.div>
+        </div>
       </div>
     </section>
   )

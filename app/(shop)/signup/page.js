@@ -91,7 +91,7 @@ export default function SignupPage() {
                   />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">Account Created!</h2>
+              <h2 className="font-display text-2xl font-bold text-gray-900">Account Created!</h2>
               <p className="text-gray-600">
                 Please check your email to verify your account.
                 <br />

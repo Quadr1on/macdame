@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { getCategoryWithProducts } from '@/lib/products'
+import { buildCollectionSlides } from '@/lib/hero-slides'
 import CollectionContent from './CollectionContent'
 
 // Catalog data is public — cache the rendered page and refresh every 5 min
@@ -27,5 +28,11 @@ export default async function CollectionPage({ params }) {
 
   if (!data) notFound()
 
-  return <CollectionContent category={data.category} products={data.products} />
+  return (
+    <CollectionContent
+      category={data.category}
+      products={data.products}
+      slides={buildCollectionSlides(data.category, data.products)}
+    />
+  )
 }

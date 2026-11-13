@@ -37,6 +37,31 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+  --font-display: var(--type-display);
+  --font-sans: var(--type-body);
+}
+
+/* Typography. Two families, one role each:
+ *   font-display (Marcellus) — headings, product names, nav, collection titles
+ *   font-sans    (Figtree)   — body copy, prices, buttons, forms, all of admin
+ * Use the `font-display` class; never inline a fontFamily.
+ *
+ * Marcellus has a single weight. font-synthesis: none stops the browser faking
+ * bold or italic from it (a smeared, cheap look) when a heading also carries
+ * font-bold or italic, so hierarchy comes from size alone. */
+:root {
+  --type-display: var(--font-marcellus), Georgia, serif;
+  --type-body: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-display {
+  font-synthesis: none;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+}
+
+:where(h1, h2, h3) {
+  text-wrap: balance;
 }
 
 @layer base {
@@ -119,6 +144,227 @@
     color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+/* ------------------------------------------------------------------------
+ * Motion
+ *
+ * One micro-interaction system for every control on the site, so press and
+ * hover feedback feel identical whether a button is a shadcn <Button>, a
+ * hand-rolled <button>, or a <Link> rendered through <Button asChild>.
+ * ---------------------------------------------------------------------- */
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --duration-press: 160ms;
+  --duration-popover: 180ms;
+  --duration-modal: 240ms;
+}
+
+/* Press feedback.
+ *
+ * Deliberately unlayered: unlayered CSS beats every Tailwind utility layer, so
+ * this one rule replaces the scattered `transition-all duration-300` that each
+ * button set for itself — those made hover colours lag and, with
+ * transition-colors, made a press scale snap instead of ease. Listing the
+ * properties (never `all`) keeps layout properties out of it.
+ *
+ * It transitions the `scale`/`translate` properties rather than `transform`:
+ * Tailwind v4's scale and translate utilities use those, and framer-motion
+ * writes inline `transform`, which must not be smoothed a second time by CSS.
+ *
+ * Opt a control out with data-press="off" (e.g. the gallery dots, which
+ * animate their own width and are too small to press-scale).
+ */
+:where(button, [role="button"], a[data-slot="button"], .btn, input[type="submit"], input[type="button"]):not([data-press="off"]) {
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, box-shadow, opacity, scale, translate;
+  transition-duration: var(--duration-press);
+  transition-timing-function: var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+:where(button, [role="button"], a[data-slot="button"], .btn, input[type="submit"], input[type="button"]):not([data-press="off"], :disabled, [aria-disabled="true"]):active {
+  scale: 0.97;
+}
+
+/* Fields: ease the focus ring and border in instead of snapping. */
+:where(input:not([type="checkbox"], [type="radio"], [type="range"]), textarea, select, [data-slot="select-trigger"]) {
+  transition-property: color, background-color, border-color, box-shadow, outline-color;
+  transition-duration: var(--duration-press);
+  transition-timing-function: var(--ease-out);
+}
+
+/* Popovers (dropdown menu, select). The shadcn components already carry
+ * `data-[state=open]:animate-in zoom-in-95` classes, but no animate plugin is
+ * loaded, so those classes emit nothing and the menus appeared instantly.
+ * Keyframes are correct here (not transitions) because Radix's Presence waits
+ * for `animationend` before unmounting on close. transform-origin is already
+ * set to the trigger by the components' origin-(--radix-…) class. */
+[data-slot="dropdown-menu-content"][data-state="open"],
+[data-slot="dropdown-menu-sub-content"][data-state="open"],
+[data-slot="select-content"][data-state="open"] {
+  animation: popover-in var(--duration-popover) var(--ease-out);
+}
+
+[data-slot="dropdown-menu-content"][data-state="closed"],
+[data-slot="dropdown-menu-sub-content"][data-state="closed"],
+[data-slot="select-content"][data-state="closed"] {
+  animation: popover-out 120ms var(--ease-out);
+}
+
+/* Dialog: centred, not trigger-anchored, so it scales from its own centre.
+ * Uses the `scale` property so it composes with the -50%/-50% `translate`
+ * that centres the panel. */
+[data-slot="dialog-overlay"][data-state="open"] { animation: fade-in var(--duration-modal) var(--ease-out); }
+[data-slot="dialog-overlay"][data-state="closed"] { animation: fade-out 160ms var(--ease-out); }
+[data-slot="dialog-content"][data-state="open"] { animation: popover-in var(--duration-modal) var(--ease-out); }
+[data-slot="dialog-content"][data-state="closed"] { animation: popover-out 160ms var(--ease-out); }
+
+@keyframes popover-in {
+  from { opacity: 0; scale: 0.96; }
+}
+
+@keyframes popover-out {
+  to { opacity: 0; scale: 0.96; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+@keyframes fade-out {
+  to { opacity: 0; }
+}
+
+/* Reduced motion: fewer and gentler, not none. Colour and opacity changes
+ * stay because they carry state; the scale movement goes. */
+@media (prefers-reduced-motion: reduce) {
+  :where(button, [role="button"], a[data-slot="button"], .btn, input[type="submit"], input[type="button"]):active {
+    scale: none;
+  }
+
+  [data-slot="dropdown-menu-content"][data-state="open"],
+  [data-slot="dropdown-menu-sub-content"][data-state="open"],
+  [data-slot="select-content"][data-state="open"],
+  [data-slot="dialog-content"][data-state="open"] {
+    animation-name: fade-in;
+  }
+
+  [data-slot="dropdown-menu-content"][data-state="closed"],
+  [data-slot="dropdown-menu-sub-content"][data-state="closed"],
+  [data-slot="select-content"][data-state="closed"],
+  [data-slot="dialog-content"][data-state="closed"] {
+    animation-name: fade-out;
+  }
+}
+
+/* ------------------------------------------------------------------------
+ * Storefront layout system (home page; tasteskill layout-v4)
+ *
+ * One section per screen, equal edges. Every section sits on one .page-wrap
+ * (1280px, gutters 24 / 48 / 80) and is one or two screens tall (--h). The
+ * exact height only applies on a screen tall enough for the planned content
+ * (1440x900 is the design frame); shorter screens let a section grow to its
+ * content rather than clip it.
+ * ---------------------------------------------------------------------- */
+:root {
+  --ink: #241710;
+  --muted: #6b5444;
+  --line: rgb(36 23 16 / 0.14);
+  --inv-bg: #1f140d;
+  --inv-ink: #fff8f0;
+  --inv-muted: #cdbba8;
+  --inv-line: rgb(255 248 240 / 0.16);
+}
+
+/* In the components layer so a Tailwind utility on the element can still
+ * override any of it (e.g. justify-between on a full-width .btn). */
+@layer components {
+.page-wrap { width: min(100% - 48px, 1280px); margin-inline: auto; }
+@media (min-width: 640px) { .page-wrap { width: min(100% - 96px, 1280px); } }
+@media (min-width: 1280px) { .page-wrap { width: min(100% - 160px, 1280px); } }
+
+.screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(var(--h, 1) * 100svh);
+  padding: 96px 0 48px;
+}
+@media (min-width: 1024px) { .screen { padding: 128px 0 64px; } }
+@media (min-width: 1024px) and (min-height: 880px) {
+  .screen { height: calc(var(--h, 1) * 100svh); min-height: 0; }
+}
+
+.ground-inverse { background: var(--inv-bg); color: var(--inv-ink); }
+
+/* Type scale: 72/38 h1, 48/30 h2, 28/24 h3, 20/18 lead, 16/26 body. */
+.t-h1 { font-size: clamp(38px, 3.048vw + 28.11px, 72px); line-height: 1.04; letter-spacing: -0.015em; }
+.t-h2 { font-size: clamp(30px, 1.667vw + 24px, 48px); line-height: 1.1; letter-spacing: -0.01em; }
+.t-h3 { font-size: clamp(22px, 0.6vw + 19.5px, 28px); line-height: 1.2; }
+.t-lead { font-size: clamp(18px, 0.18vw + 17.4px, 20px); line-height: 1.5; }
+.measure { max-width: 46ch; }
+
+/* Buttons (dealt: arrow). One filled button with a drawn arrow; the
+ * secondary action is a text link at the same height, never a second box. */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  height: 48px; padding: 0 24px; border-radius: 6px;
+  font: 500 16px/1 var(--type-body); white-space: nowrap;
+  text-decoration: none;
+}
+.btn-primary { background: var(--color-primary); color: var(--color-cream); }
+.btn-primary:hover { background: var(--color-primary-dark); }
+.ground-inverse .btn-primary { background: var(--color-cream); color: var(--ink); }
+.ground-inverse .btn-primary:hover { background: var(--color-cream-dark); }
+.btn-link {
+  padding-inline: 8px; color: inherit;
+  text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
+}
+.btn-link:hover { text-decoration-color: currentColor; }
+.btn .btn-arrow { width: 14px; height: 14px; flex: none; transition: translate var(--duration-press) var(--ease-out); }
+.btn-xl { height: 72px; padding: 0 36px; font-size: 22px; gap: 14px; }
+.btn-xl .btn-arrow { width: 20px; height: 20px; }
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover .btn-arrow { translate: 3px 0; }
+}
+}
+
+/* A link whose underline draws in on hover. */
+.link-draw {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size 220ms var(--ease-out);
+  padding-bottom: 2px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .link-draw:hover, a:hover .link-draw { background-size: 100% 1px; }
+}
+
+/* A photograph that leads somewhere zooms a little inside its frame; its card
+ * lifts 2px. Hover only on a real pointer. */
+.photo-zoom { transition: scale 500ms var(--ease-out); }
+.card-lift { transition: translate 240ms var(--ease-out), box-shadow 240ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .photo-zoom { scale: 1.03; }
+  .card-lift:hover { translate: 0 -2px; }
+}
+
+/* The hero enters once on load: lines rise, the photograph settles. Content
+ * is visible by default; the animation only plays it in. */
+@keyframes enter-rise { from { opacity: 0; translate: 0 14px; } }
+@keyframes enter-settle { from { opacity: 0; scale: 1.04; } }
+.enter > * { animation: enter-rise 760ms var(--ease-out) both; animation-delay: var(--d, 0ms); }
+.enter-photo { animation: enter-settle 1200ms var(--ease-out) both; animation-delay: 120ms; }
+
+/* The hero's photographs open like a curtain lifting, once, from the bottom.
+ * clip-path only, so the picture inside never moves or rescales. */
+@keyframes curtain-up { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+.hero-curtain { animation: curtain-up 1100ms cubic-bezier(0.77, 0, 0.175, 1) both; animation-delay: var(--d, 0ms); }
+
+@media (prefers-reduced-motion: reduce) {
+  .enter > *, .enter-photo, .hero-curtain { animation: none; }
+  .photo-zoom, .card-lift { transition: none; }
 }
 
 /* Custom Scrollbar Styling */

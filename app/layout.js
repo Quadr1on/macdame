@@ -1,14 +1,16 @@
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Marcellus, Figtree } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/lib/auth-context'
 
-const inter = Inter({ subsets: ['latin'] })
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair',
-  display: 'swap',
-  weight: ['400', '500', '600', '700'],
-})
+// Display: Marcellus, a flared, inscriptional serif. It reads ceremonial and
+// handcrafted without shouting, and it stays crisp over busy fabric photography
+// at small sizes, where high-contrast serifs lose their hairlines. It ships in
+// a single weight, so hierarchy comes from size, not bold (see globals.css).
+const display = Marcellus({ subsets: ['latin'], weight: '400', variable: '--font-marcellus' })
+
+// Body and UI: Figtree, a clean, open sans with real weights for prices,
+// buttons and labels.
+const body = Figtree({ subsets: ['latin'], variable: '--font-figtree' })
 
 export const metadata = {
   title: 'Macdame - Authentic South Indian Wear',
@@ -18,8 +20,10 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} ${playfair.variable}`}>
+    // Font variables sit on <html> so the --type-* tokens declared on :root can
+    // resolve them.
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
+      <body>
         <AuthProvider>
           {children}
         </AuthProvider>

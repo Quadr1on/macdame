@@ -33,7 +33,7 @@ export default function ProductDetail({ product }) {
         <Navbar />
         <main className="pt-24 pb-16 flex items-center justify-center">
           <div className="text-center space-y-4">
-            <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: 'Georgia, serif' }}>
+            <h1 className="font-display text-2xl font-bold text-gray-900">
               Product not found
             </h1>
             <p className="text-gray-500">The product you're looking for doesn't exist.</p>
@@ -166,6 +166,7 @@ export default function ProductDetail({ product }) {
                       <button
                         key={i}
                         onClick={() => setSelectedImage(i)}
+                        data-press="off"
                         className={`rounded-full transition-all duration-300 ${
                           i === selectedImage
                             ? 'w-6 h-2 bg-[var(--color-secondary)]'
@@ -224,8 +225,7 @@ export default function ProductDetail({ product }) {
               {/* Name & Rating */}
               <div>
                 <h1
-                  className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight"
-                  style={{ fontFamily: 'Georgia, serif' }}
+                  className="font-display text-2xl md:text-3xl font-bold text-gray-900 leading-tight"
                 >
                   {product.name}
                 </h1>
@@ -425,7 +425,7 @@ export default function ProductDetail({ product }) {
                         {/* Description */}
                         <div>
                           <h4 className="text-xs font-bold text-gray-700 uppercase mb-1.5">Description</h4>
-                          <p className="text-sm text-gray-600 leading-relaxed" style={{ fontFamily: 'Georgia, serif', fontStyle: 'normal' }}>
+                          <p className="text-sm text-gray-600 leading-relaxed text-pretty">
                             {product.description}
                           </p>
                         </div>

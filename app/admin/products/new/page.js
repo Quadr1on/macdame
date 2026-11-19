@@ -1,10 +1,15 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { PageHeader } from '@/components/admin/ui'
+import { getAdminUser } from '@/lib/admin-auth'
+import { can } from '@/lib/admin-permissions'
+import { PageHeader, NoAccess } from '@/components/admin/ui'
 import ProductForm from '@/components/admin/ProductForm'
 
 export default async function NewProductPage() {
+  const { access } = await getAdminUser()
+  if (!can(access, 'products.edit')) return <NoAccess what="adding products" />
+
   const admin = createAdminClient()
   const { data: categories } = await admin
     .from('categories')

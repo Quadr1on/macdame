@@ -74,3 +74,19 @@ export function FieldRow({ label, value, className = '' }) {
     </div>
   )
 }
+
+/**
+ * Shown in place of a page the viewer's roles don't cover. Pages must render
+ * this instead of their content (the check is on the server); hiding the
+ * sidebar link alone would not stop someone typing the URL.
+ */
+export function NoAccess({ what = 'this page' }) {
+  return (
+    <section className="bg-white border border-slate-200 rounded-lg px-4 py-12 text-center">
+      <h1 className="text-base font-semibold text-slate-900">You don&apos;t have access to {what}</h1>
+      <p className="mt-1 text-sm text-slate-500">
+        Your role doesn&apos;t include it. Ask the shop owner if you need it.
+      </p>
+    </section>
+  )
+}

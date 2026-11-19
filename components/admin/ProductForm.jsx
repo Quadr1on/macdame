@@ -78,7 +78,7 @@ function Checkbox({ id, checked, onChange, label, hint }) {
   )
 }
 
-export default function ProductForm({ categories, product = null }) {
+export default function ProductForm({ categories, product = null, canDelete = true }) {
   const router = useRouter()
   const isEdit = Boolean(product)
 
@@ -461,7 +461,7 @@ export default function ProductForm({ categories, product = null }) {
           </Link>
         </div>
 
-        {isEdit && (
+        {isEdit && canDelete && (
           <Panel title="Danger zone">
             <div className="p-4">
               <p className="text-xs text-slate-500 mb-3">

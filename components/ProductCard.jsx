@@ -12,19 +12,23 @@ export default function ProductCard({ product }) {
   const [addedToCart, setAddedToCart] = useState(false)
   const addItem = useCartStore((state) => state.addItem)
 
+  // Everything shown comes from the product row. There are deliberately no
+  // stand-in values: a missing field shows nothing rather than a made-up
+  // saree, price or star rating.
   const {
-    name = 'Kerala Kasavu Saree',
-    price = 2499,
-    originalPrice = 3499,
-    image = '/product-kasavu-saree.png',
-    rating = 4.8,
-    reviews = 124,
+    name = '',
+    price = 0,
+    originalPrice = null,
+    image = null,
+    rating = null,
+    reviews = null,
     isNew = false,
     isBestseller = false,
-    href = '/products/1',
+    href = '/shop',
   } = product || {}
 
-  const discount = originalPrice ? Math.round((1 - price / originalPrice) * 100) : 0
+  const discount = originalPrice && originalPrice > price ? Math.round((1 - price / originalPrice) * 100) : 0
+  const hasRating = typeof rating === 'number' && rating > 0
 
   return (
     // No scroll-in fade: cards are visible as the page renders. The hover
@@ -38,12 +42,13 @@ export default function ProductCard({ product }) {
         {/* Image Container */}
         <Link href={href} className="block relative aspect-[3/4] overflow-hidden bg-[#f8f6f3]">
           <div className="relative w-full h-full photo-zoom">
-            <Image
-              src={image}
-              alt={name}
-              fill
-              className="object-cover"
-            />
+            {image ? (
+              <Image src={image} alt={name} fill className="object-cover" />
+            ) : (
+              <div className="grid h-full w-full place-items-center bg-[var(--color-cream-dark)] font-display text-5xl text-[var(--muted)]" aria-hidden="true">
+                {name.charAt(0)}
+              </div>
+            )}
           </div>
         </Link>
 
@@ -160,22 +165,24 @@ export default function ProductCard({ product }) {
 
       {/* Content */}
       <div className="relative p-5 space-y-3">
-        {/* Rating - Subtle */}
-        <div className="flex items-center gap-1.5">
-          <div className="flex items-center">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`w-3 h-3 ${
-                  i < Math.floor(rating)
-                    ? 'fill-[var(--color-secondary)] text-[var(--color-secondary)]'
-                    : 'fill-gray-200 text-gray-200'
-                }`}
-              />
-            ))}
+        {/* Rating — only when the product actually has one */}
+        {hasRating && (
+          <div className="flex items-center gap-1.5">
+            <div className="flex items-center">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className={`w-3 h-3 ${
+                    i < Math.floor(rating)
+                      ? 'fill-[var(--color-secondary)] text-[var(--color-secondary)]'
+                      : 'fill-gray-200 text-gray-200'
+                  }`}
+                />
+              ))}
+            </div>
+            {reviews > 0 && <span className="text-xs text-gray-400">({reviews})</span>}
           </div>
-          <span className="text-xs text-gray-400">({reviews})</span>
-        </div>
+        )}
 
         {/* Name */}
         <Link href={href}>

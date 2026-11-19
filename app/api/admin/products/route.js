@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server'
 import { requireAdminApi } from '@/lib/admin-auth'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { normalizeProductPayload, normalizeVariants } from '@/lib/admin-products'
+import { revalidateStorefront } from '@/lib/revalidate-storefront'
 
 export async function POST(request) {
-  const guard = await requireAdminApi()
+  const guard = await requireAdminApi('products.edit')
   if (guard.response) return guard.response
 
   const body = await request.json().catch(() => ({}))
@@ -48,5 +49,6 @@ export async function POST(request) {
     }
   }
 
+  revalidateStorefront()
   return NextResponse.json({ product })
 }

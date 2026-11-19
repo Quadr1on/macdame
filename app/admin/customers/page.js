@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { PageHeader, Panel, EmptyState } from '@/components/admin/ui'
+import { getAdminUser } from '@/lib/admin-auth'
+import { can } from '@/lib/admin-permissions'
+import { PageHeader, Panel, EmptyState, NoAccess } from '@/components/admin/ui'
 import {
   Table,
   TableBody,
@@ -12,6 +14,9 @@ import {
 import { formatCurrency, formatOrderDate } from '@/lib/order-status'
 
 export default async function AdminCustomersPage() {
+  const { access } = await getAdminUser()
+  if (!can(access, 'customers.view')) return <NoAccess what="customers" />
+
   const admin = createAdminClient()
 
   const [{ data: profiles, error }, { data: authList }, { data: orders }] = await Promise.all([

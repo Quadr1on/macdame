@@ -15,6 +15,11 @@ import useCartStore from '@/lib/cart-store'
 
 export default function ProductDetail({ product }) {
   const router = useRouter()
+  // Products created in the admin have no rating or review count (both
+  // NULL), so the rating UI only renders when there is a real rating, the
+  // same rule ProductCard uses.
+  const hasRating = typeof product.rating === 'number' && product.rating > 0
+  const reviewCount = Number(product.reviews) || 0
 
   const [selectedImage, setSelectedImage] = useState(0)
   const [selectedSize, setSelectedSize] = useState(null)
@@ -229,15 +234,19 @@ export default function ProductDetail({ product }) {
                 >
                   {product.name}
                 </h1>
-                <div className="flex items-center gap-3 mt-2">
-                  <div className="flex items-center gap-1 px-2.5 py-1 bg-green-600 text-white text-sm font-semibold rounded-md">
-                    {product.rating}
-                    <Star className="w-3.5 h-3.5 fill-current" />
+                {hasRating && (
+                  <div className="flex items-center gap-3 mt-2">
+                    <div className="flex items-center gap-1 px-2.5 py-1 bg-green-600 text-white text-sm font-semibold rounded-md">
+                      {product.rating}
+                      <Star className="w-3.5 h-3.5 fill-current" />
+                    </div>
+                    {reviewCount > 0 && (
+                      <span className="text-sm text-gray-500">
+                        {reviewCount.toLocaleString('en-IN')} Ratings
+                      </span>
+                    )}
                   </div>
-                  <span className="text-sm text-gray-500">
-                    {product.reviews.toLocaleString()} Ratings
-                  </span>
-                </div>
+                )}
               </div>
 
               {/* Price */}
@@ -474,6 +483,7 @@ export default function ProductDetail({ product }) {
               )}
 
               {/* Ratings Summary */}
+              {hasRating && (
               <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-3">
                 <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Ratings & Reviews</h3>
                 <div className="flex items-center gap-4">
@@ -491,7 +501,7 @@ export default function ProductDetail({ product }) {
                         />
                       ))}
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">{product.reviews} reviews</p>
+                    <p className="text-xs text-gray-500 mt-1">{reviewCount.toLocaleString('en-IN')} reviews</p>
                   </div>
 
                   {/* Rating Bars */}
@@ -518,6 +528,7 @@ export default function ProductDetail({ product }) {
                   </div>
                 </div>
               </div>
+              )}
 
             </motion.div>
           </div>
